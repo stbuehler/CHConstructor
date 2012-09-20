@@ -1,11 +1,8 @@
 package de.tourenplaner.chconstruction;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.PriorityQueue;
-import java.util.Random;
-import java.util.Scanner;
 import java.io.*;
+import java.util.Random;
+import java.util.regex.Pattern;
 
 public class RAMGraph extends SGraph {
 
@@ -425,304 +422,209 @@ public class RAMGraph extends SGraph {
 		}
 		System.out.println("We have found "+count_shortcuts+" shortcuts");
 	}
-	
-	void readGTXT(String fname)
-	{
-		long curTime=System.currentTimeMillis();
-		
-		File file = new File(fname);
-		byte[] bytes = new byte[(int) file.length()];
-		FileInputStream fis;
-		try {
-			fis = new FileInputStream(file);
-			try {
-				fis.read(bytes);
-				fis.close();
-				System.out.println("Reading took "+(System.currentTimeMillis()-curTime));
-				String[] valueStr = new String(bytes).trim().split("\\s+");
-				
-				int curpos=0;
-				nofNodes=Integer.parseInt(valueStr[curpos++]);
-				nofEdges=Integer.parseInt(valueStr[curpos++]);
-				setupMemory();
 
-				for(int i=0; i<nofNodes; i++)
-				{
-					xCoord[i]=Float.parseFloat(valueStr[curpos++]);
-					yCoord[i]=Float.parseFloat(valueStr[curpos++]);
-					//altID[i]=i;
-					altID[i]=Integer.parseInt(valueStr[curpos++]);
-					
-					if ((i%(nofNodes/10))==0)
-					{
-						System.out.print((10*i/(nofNodes/10)+"% "));
-					}
-				}
-				for(int i=0; i<nofEdges; i++)
-				{
-					edgeSource[i]=Integer.parseInt(valueStr[curpos++]);
-					edgeTarget[i]=Integer.parseInt(valueStr[curpos++]);
-					edgeWeight[i]=Integer.parseInt(valueStr[curpos++]);
-					
-					if ((i%(nofEdges/10))==0)
-					{
-						System.out.print((10*i/(nofEdges/10)+"% "));
-					}
-				}
-				
-				System.out.println("Parsing took "+(System.currentTimeMillis()-curTime));
-				setupOffsets();
+    private static final Pattern COMPILE = Pattern.compile(" ");
+	
+	void readGTXT(InputStream istream)	throws IOException {
+        long curTime=System.currentTimeMillis();
 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-/*
-		
-		try
-		{
-			File datei=new File(fname);
-			Scanner eingabe=new Scanner(datei);
-			
-			eingabe.useLocale(Locale.US);
-			
-			nofNodes=eingabe.nextInt();
-			nofEdges=eingabe.nextInt();
-	
-			System.out.println("Reading "+nofNodes+" nodes and "+nofEdges+" edges");
-			setupMemory();
-			
-			for(int i=0; i<nofNodes; i++)
-			{
-				xCoord[i]=eingabe.nextFloat();
-				yCoord[i]=eingabe.nextFloat();
-				altID[i]=i;
-				
-				if ((i%(nofNodes/10))==0)
-				{
-					System.out.print((10*i/(nofNodes/10)+"% "));
-				}
-			}
-			System.out.println("... finished reading vertices");
-			
-			long edgeSum=0;
-			
-			for(int i=0; i<nofEdges; i++)
-			{
-				edgeSource[i]=eingabe.nextInt();
-				edgeTarget[i]=eingabe.nextInt();
-				edgeWeight[i]=eingabe.nextInt();
-				edgeSum+=edgeWeight[i];
-				
-				if ((i%(nofEdges/10))==0)
-				{
-					System.out.print((10*i/(nofEdges/10)+"% "));
-				}
-			}
-			System.out.println(" ... finished reading edges of total weight "+edgeSum);
-			
-			setupOffsets();
-			System.out.println(" ... finished reading graph");
-			
-			
-		} catch(FileNotFoundException e)
-		{
-			System.err.println("Datei nicht vorhanden!");
-		}
-		*/
-		System.out.println("Read graph "+fname+" with "+nofNodes+
-				" vertices and "+nofEdges+" edges in time "+(System.currentTimeMillis()-curTime)+"ms");
-	
+        BufferedReader inb = new BufferedReader(new InputStreamReader(istream));
+        String line = inb.readLine();
+        while (line != null && line.trim().startsWith("#")) {
+            line = inb.readLine();
+        }
+        nofNodes = line != null ? Integer.parseInt(line) : 0;
+
+        line = inb.readLine();
+        nofEdges = line != null ? Integer.parseInt(line) : 0;
+        setupMemory();
+        String[] splittedLine;
+        for(int i=0; i<nofNodes; i++) {
+            splittedLine = COMPILE.split(inb.readLine());
+            xCoord[i]=Float.parseFloat(splittedLine[1]);
+            yCoord[i]=Float.parseFloat(splittedLine[2]);
+            //altID[i]=i;
+            altID[i]=Integer.parseInt(splittedLine[3]);
+
+            if ((i%(nofNodes/10))==0)
+            {
+                System.out.print((10*i/(nofNodes/10)+"% "));
+            }
+        }
+
+        for(int i=0; i<nofEdges; i++) {
+            splittedLine = COMPILE.split(inb.readLine());
+            edgeSource[i]=Integer.parseInt(splittedLine[0]);
+            edgeTarget[i]=Integer.parseInt(splittedLine[1]);
+            edgeWeight[i]=Integer.parseInt(splittedLine[2]);
+
+            if ((i%(nofEdges/10))==0)
+            {
+                System.out.print((10*i/(nofEdges/10)+"% "));
+            }
+        }
+
+        System.out.println("Parsing took "+(System.currentTimeMillis()-curTime));
+        setupOffsets();
+
+        System.out.println("Read graph with "+nofNodes+
+                " vertices and "+nofEdges+" edges in time "+(System.currentTimeMillis()-curTime)+"ms");
+
 	}
 
-	void writeGTXT(String fname)
-	{
+	void writeGTXT(OutputStream ostream) throws IOException	{
 		long curTime=System.currentTimeMillis();
-		File myFile=new File(fname);
-		try{
-			FileWriter gaga=new FileWriter(myFile);
-			BufferedWriter data_out=new BufferedWriter(gaga);
 
-			// write-out nof vertices and edges
-			data_out.write(nofNodes()+"\n");
-			data_out.write(nofEdges()+"\n");
-			// write-out coordinates and levels
-			System.out.print("\n Nodes:");
-			for(int i=0; i<nofNodes(); i++)
-			{
-				data_out.write(xCoord[i]+" ");
-				data_out.write(yCoord[i]+" ");
-				data_out.write(level[i]+"\n");
+        OutputStreamWriter data_out = new OutputStreamWriter(ostream);
 
-				if ((i%(nofNodes/10))==0)
-				{
-					System.out.print((10*i/(nofNodes/10)+"% "));
-				}
-			}
-			System.out.print("\n Edges: ");
-			// write-out edges
-			for(int j=0; j<nofEdges; j++)
-			{
-				data_out.write(edgeSource[j]+" ");
-				data_out.write(edgeTarget[j]+" ");
-				data_out.write(edgeWeight[j]+"\n");
+        // write-out nof vertices and edges
+        data_out.write(nofNodes()+"\n");
+        data_out.write(nofEdges()+"\n");
+        // write-out coordinates and levels
+        System.out.print("\n Nodes:");
+        for(int i=0; i<nofNodes(); i++)
+        {
+            data_out.write(xCoord[i]+" ");
+            data_out.write(yCoord[i]+" ");
+            data_out.write(level[i]+"\n");
 
-				if ((j%(nofEdges/10))==0)
-				{
-					System.out.print((10*j/(nofEdges/10)+"% "));
-				}
-			} 
-			data_out.close();
-		}
-		catch (IOException e) {
-			System.out.println ("IO exception = " + e );
-		}
-		System.out.println("Writing GTXT took "+(System.currentTimeMillis()-curTime)+"ms");
+            if ((i%(nofNodes/10))==0)
+            {
+                System.out.print((10*i/(nofNodes/10)+"% "));
+            }
+        }
+        System.out.print("\n Edges: ");
+        // write-out edges
+        for(int j=0; j<nofEdges; j++)
+        {
+            data_out.write(edgeSource[j]+" ");
+            data_out.write(edgeTarget[j]+" ");
+            data_out.write(edgeWeight[j]+"\n");
+
+            if ((j%(nofEdges/10))==0)
+            {
+                System.out.print((10*j/(nofEdges/10)+"% "));
+            }
+        }
+        data_out.close();
+ 		System.out.println("Writing GTXT took "+(System.currentTimeMillis()-curTime)+"ms");
 	}
-	void writeBIN(String fname)
-	{
+	void writeBIN(OutputStream ostream) throws IOException {
 		long curTime=System.currentTimeMillis();
-		File myFile=new File(fname);
-		try {
-		      // Create an output stream to the file.
-		      FileOutputStream file_output = new FileOutputStream (myFile);
-		      BufferedOutputStream buf_out=new BufferedOutputStream(file_output);
-		      // Wrap the FileOutputStream with a DataOutputStream
-		      DataOutputStream data_out = new DataOutputStream (buf_out);
+	    // Wrap the FileOutputStream with a DataOutputStream
+        DataOutputStream data_out = new DataOutputStream (ostream);
+        // write-out nof vertices and edges
+        data_out.writeInt(nofNodes);
+        data_out.writeInt(nofEdges);
 
-		      
-		     
-			  // write-out nof vertices and edges
-		      data_out.writeInt(nofNodes);
-		      data_out.writeInt(nofEdges);
-		    
-		      // write-out node data
-		      for(int i=0; i<nofNodes; i++)
-		      {
-		    	  data_out.writeFloat(xCoord[i]);
-		    	  data_out.writeFloat(yCoord[i]);
-		      }
-		      for(int i=0; i<nofNodes; i++)
-		      {
-		    	  data_out.writeInt(altID[i]);
-		      }
-		      for(int i=0; i<nofNodes; i++)
-		      {
-		    	  data_out.writeInt(level[i]);
-		      }
-		      for(int i=0; i<nofNodes+1; i++)
-		      {
-		    	  data_out.writeInt(outEdgeOffset[i]);
-		      }
-		      for(int i=0; i<nofNodes+1; i++)
-		      {
-		    	  data_out.writeInt(inEdgeOffset[i]);
-		      }
-		      
-		      // write-out edge data
-		      for(int j=0; j<nofEdges; j++)
-		      {
-		    	  data_out.writeInt(outEdgeList[j]);
-		      }
-		      for(int j=0; j<nofEdges; j++)
-		      {
-		    	  data_out.writeInt(inEdgeList[j]);
-		      }
-		      for(int i=0; i<nofEdges; i++)
-		      {
-		    	  data_out.writeInt(edgeSource[i]);
-		    	  data_out.writeInt(edgeTarget[i]);
-		    	  data_out.writeInt(edgeWeight[i]);
-		      } 
-		      for(int i=0; i<nofEdges; i++)
-		      {
-		    	  data_out.writeInt(edgeSkippedA[i]);
-		    	  data_out.writeInt(edgeSkippedB[i]);
-		      }
-		      buf_out.flush();
-		    }
-		    catch (IOException e) {
-		       System.out.println ("IO exception = " + e );
-		    }
-		    System.out.println("Wrote BIN file in time "+(System.currentTimeMillis()-curTime));
+        // write-out node data
+        for(int i=0; i<nofNodes; i++)
+        {
+          data_out.writeFloat(xCoord[i]);
+          data_out.writeFloat(yCoord[i]);
+        }
+        for(int i=0; i<nofNodes; i++)
+        {
+          data_out.writeInt(altID[i]);
+        }
+        for(int i=0; i<nofNodes; i++)
+        {
+          data_out.writeInt(level[i]);
+        }
+        for(int i=0; i<nofNodes+1; i++)
+        {
+          data_out.writeInt(outEdgeOffset[i]);
+        }
+        for(int i=0; i<nofNodes+1; i++)
+        {
+          data_out.writeInt(inEdgeOffset[i]);
+        }
+
+        // write-out edge data
+        for(int j=0; j<nofEdges; j++)
+        {
+          data_out.writeInt(outEdgeList[j]);
+        }
+        for(int j=0; j<nofEdges; j++)
+        {
+          data_out.writeInt(inEdgeList[j]);
+        }
+        for(int i=0; i<nofEdges; i++)
+        {
+          data_out.writeInt(edgeSource[i]);
+          data_out.writeInt(edgeTarget[i]);
+          data_out.writeInt(edgeWeight[i]);
+        }
+        for(int i=0; i<nofEdges; i++)
+        {
+          data_out.writeInt(edgeSkippedA[i]);
+          data_out.writeInt(edgeSkippedB[i]);
+        }
+        ostream.flush();
+
+        System.out.println("Wrote BIN file in time "+(System.currentTimeMillis()-curTime));
 	}
-	void readBIN(String fname)
-	{
+	void readBIN(InputStream istream) throws IOException {
 		long curTime=System.currentTimeMillis();
-		File myFile=new File(fname);
-		try {
-		      // Create an input stream from the file.
-		      FileInputStream file_input = new FileInputStream (myFile);
-		      // Wrap the FileInputStream with a BufferedInputStream
-		      BufferedInputStream buff_in=new BufferedInputStream(file_input);
-		      // ... and wrap this into a DataInputStream
-		      DataInputStream data_in = new DataInputStream (buff_in);
-		      
 
-		      // read # vertices and edges
-		      nofNodes=data_in.readInt();
-		      nofEdges=data_in.readInt();
-		      System.out.println("Reading "+nofNodes+" vertices and "+nofEdges+
-		    		  			" edges");	
-		      setupMemory();
-		    
-		      // read node data
-		      for(int i=0; i<nofNodes; i++)
-		      {
-		    	  xCoord[i]=data_in.readFloat();
-		    	  yCoord[i]=data_in.readFloat();
-		      }
-		      for(int i=0; i<nofNodes; i++)
-		      {
-		    	  altID[i]=data_in.readInt();;
-		      }
-		      for(int i=0; i<nofNodes; i++)
-		      {
-		    	  level[i]=data_in.readInt();
-		      }
-		      for(int i=0; i<nofNodes+1; i++)
-		      {
-		    	  outEdgeOffset[i]=data_in.readInt();
-		      }
-		      for(int i=0; i<nofNodes+1; i++)
-		      {
-		    	  inEdgeOffset[i]=data_in.readInt();
-		      }
-		      
-		      // write-out edge data
-		      for(int j=0; j<nofEdges; j++)
-		      {
-		    	  outEdgeList[j]=data_in.readInt();
-		      }
-		      for(int j=0; j<nofEdges; j++)
-		      {
-		    	  inEdgeList[j]=data_in.readInt();
-		      }
+          // ... wrap the stream
+          DataInputStream data_in = new DataInputStream (istream);
 
-		      for(int i=0; i<nofEdges; i++)
-		      {
-		    	  edgeSource[i]=data_in.readInt();
-		       	  edgeTarget[i]=data_in.readInt();
-		    	  edgeWeight[i]=data_in.readInt();
-		    	  if (edgeWeight[i]<=0)
-		    		  edgeWeight[i]=1;
-		      }
-		      for(int i=0; i<nofEdges; i++)
-		      {
-		    	  edgeSkippedA[i]=data_in.readInt();
-		    	  edgeSkippedB[i]=data_in.readInt();
-		      }
-		    }
-		    catch (IOException e) {
-		       System.out.println ("IO exception = " + e );
-		    }
-		    System.out.println("Read BIN file in time "+(System.currentTimeMillis()-curTime));
+
+          // read # vertices and edges
+          nofNodes=data_in.readInt();
+          nofEdges=data_in.readInt();
+          System.out.println("Reading "+nofNodes+" vertices and "+nofEdges+
+                            " edges");
+          setupMemory();
+
+          // read node data
+          for(int i=0; i<nofNodes; i++)
+          {
+              xCoord[i]=data_in.readFloat();
+              yCoord[i]=data_in.readFloat();
+          }
+          for(int i=0; i<nofNodes; i++)
+          {
+              altID[i]=data_in.readInt();;
+          }
+          for(int i=0; i<nofNodes; i++)
+          {
+              level[i]=data_in.readInt();
+          }
+          for(int i=0; i<nofNodes+1; i++)
+          {
+              outEdgeOffset[i]=data_in.readInt();
+          }
+          for(int i=0; i<nofNodes+1; i++)
+          {
+              inEdgeOffset[i]=data_in.readInt();
+          }
+
+          // write-out edge data
+          for(int j=0; j<nofEdges; j++)
+          {
+              outEdgeList[j]=data_in.readInt();
+          }
+          for(int j=0; j<nofEdges; j++)
+          {
+              inEdgeList[j]=data_in.readInt();
+          }
+
+          for(int i=0; i<nofEdges; i++)
+          {
+              edgeSource[i]=data_in.readInt();
+              edgeTarget[i]=data_in.readInt();
+              edgeWeight[i]=data_in.readInt();
+              if (edgeWeight[i]<=0)
+                  edgeWeight[i]=1;
+          }
+          for(int i=0; i<nofEdges; i++)
+          {
+              edgeSkippedA[i]=data_in.readInt();
+              edgeSkippedB[i]=data_in.readInt();
+          }
+         System.out.println("Read BIN file in time "+(System.currentTimeMillis()-curTime));
 	}
 	
 	void createGraphSkeleton(int _nodes, int _edges)
