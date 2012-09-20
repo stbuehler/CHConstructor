@@ -1,5 +1,6 @@
-import java.util.PriorityQueue;
+package de.tourenplaner.chconstruction;
 
+import java.util.PriorityQueue;
 
 // functionality:
 // * compute shortest path between given source and target

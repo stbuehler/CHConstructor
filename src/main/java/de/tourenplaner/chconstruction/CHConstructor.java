@@ -1,3 +1,5 @@
+package de.tourenplaner.chconstruction;
+
 import java.util.PriorityQueue;
 
 /* computes contraction hierarchy for the given graph

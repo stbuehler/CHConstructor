@@ -1,3 +1,4 @@
+package de.tourenplaner.chconstruction;
 /* Graph classes 
  * Desired Properties: 	- static
  * 						- explicit in- and outedge lists

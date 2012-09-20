@@ -1,3 +1,4 @@
+package de.tourenplaner.chconstruction;
 
 public class GraphTraversals {
 
