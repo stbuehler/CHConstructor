@@ -58,7 +58,7 @@ public class CHConstructor {
 				int curTrgEdge=tempGraph.outEdgeID(curNode, j);
 				int curTrg=tempGraph.edgeTarget(curTrgEdge);
 				int weightSC=tempGraph.edgeWeight(curSrcEdge)+tempGraph.edgeWeight(curTrgEdge);
-				int d=myDijkstra.runDijkstra(curSrc, curTrg);
+				myDijkstra.runDijkstra(curSrc, curTrg);
 				//if (d==weightSC) // better: check if pred[curTrg]==curNode and pred[curNode]==curSrc
 				if (((myDijkstra.pred(curTrg)==curNode)&&(myDijkstra.pred(curNode)==curSrc)))
 				{
@@ -99,7 +99,7 @@ public class CHConstructor {
 		{
 			curEl=degreePQ.remove();
 			int curNode=curEl.value;
-			if (stillIndep[curNode]==true)
+			if (stillIndep[curNode])
 			{
 				degSum+=curEl.key;
 				candidates[nofCandidates]=curNode;
@@ -144,23 +144,22 @@ public class CHConstructor {
 		// instantiate Dijkstra
 		Dijkstra myDijkstra=new Dijkstra(tempGraph);
 		
-		int tentNofSC=0;
+		int tentNofSC;
 		candSCoffset[0]=0;	
 		
 		// now we try to contract the nodes of the independent set
 		PriorityQueue<PQElement> contractionPQ;
 		
-		int sumED=0;
-		int validED=0;
+		int sumED;
+		int validED;
 		
 		boundSC=(boundSC+4)/2;
 		if (newLevel<3)
 			boundSC=2;
 		int candBound=nofCandidates;	// how many candidates to look at
 		int validBound=5*candBound/6;		// how many of the considered candidates to fully evaluate (at least)
-		int contractBound=validBound;	// how many of the evaluated candidates to contract (at least)
-		
-		do
+
+        do
 		{
 			contractionPQ=new PriorityQueue<PQElement>();
 			boundSC=boundSC*2;
@@ -205,7 +204,7 @@ public class CHConstructor {
 		} while (validED<validBound);
 		
 		int newNofNodes=0;
-		int newNofEdges=0;
+		int newNofEdges;
 		int realContract=0;
 		int totalNofSC=0;
 
@@ -226,7 +225,7 @@ public class CHConstructor {
 			int curNofSC=candSCoffset[curNode+1]-candSCoffset[curNode];
 			
 			if (	(curNofSC<boundSC) &&								// we contract if ED<=0 but at least 3/4 of valid candidates
-					((curED<=0) || (curED<avgED) || (realContract<=contractBound) 
+					((curED<=0) || (curED<avgED) || (realContract<= validBound)
 					)
 				)
 			{

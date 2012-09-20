@@ -1,7 +1,5 @@
 package de.tourenplaner.chconstruction;
 
-import java.util.PriorityQueue;
-
 public class CHDijkstra extends BDDijkstra {
 	
 	CHDijkstra(SGraph _myGraph)
@@ -29,7 +27,7 @@ public class CHDijkstra extends BDDijkstra {
 		int edgeCount=0;
 		// otherwise we have to process pq until settling trg
 		boolean phaseFinished=false;
-		while ((!myQueue.isEmpty())&&(phaseFinished==false))
+		while ((!myQueue.isEmpty())&& !phaseFinished)
 		{
 			//System.out.print(".");
 			BDPQElement cur=myQueue.remove();
@@ -68,7 +66,7 @@ public class CHDijkstra extends BDDijkstra {
 					if ((settledBwd[cur_node]) &&(distFwd[cur_node]+distBwd[cur_node]<bestDist))
 						bestDist=distFwd[cur_node]+distBwd[cur_node];
 						
-					if (stalled==false)
+					if (!stalled)
 						for (int i=myGraph.nofOutEdges(cur_node)-1; i>=0; i--)
 						{
 							int cur_edge=myGraph.outEdgeID(cur_node, i);
@@ -112,7 +110,7 @@ public class CHDijkstra extends BDDijkstra {
 					if ((settledFwd[cur_node]) &&(distFwd[cur_node]+distBwd[cur_node]<bestDist))
 						bestDist=distFwd[cur_node]+distBwd[cur_node];
 			
-					if (stalled==false)
+					if (!stalled)
 						for (int i=myGraph.nofInEdges(cur_node)-1; i>=0; i--)
 						{
 							int cur_edge=myGraph.inEdgeID(cur_node, i);

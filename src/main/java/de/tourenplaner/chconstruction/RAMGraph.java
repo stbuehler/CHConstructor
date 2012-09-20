@@ -586,7 +586,7 @@ public class RAMGraph extends SGraph {
           }
           for(int i=0; i<nofNodes; i++)
           {
-              altID[i]=data_in.readInt();;
+              altID[i]=data_in.readInt();
           }
           for(int i=0; i<nofNodes; i++)
           {

@@ -74,7 +74,7 @@ public class Dijkstra {
 		}
 		// otherwise we have to process pq until settling trg
 		boolean targetFound=false;
-		while ((!myQueue.isEmpty())&&(targetFound==false))
+		while ((!myQueue.isEmpty())&& !targetFound)
 		{
 			PQElement cur=myQueue.remove();
 			int cur_dist=cur.key;
@@ -103,7 +103,7 @@ public class Dijkstra {
 	}
 	void printPath(int trg)
 	{
-		if (settled[trg]==false)
+		if (!settled[trg])
 			return;
 		int cur_node=trg;
 		do
@@ -117,7 +117,7 @@ public class Dijkstra {
 	
 	void printGeoPath(int trg)
 	{
-		if (settled[trg]==false)
+		if (!settled[trg])
 			return;
 		int cur_node=trg;
 		System.out.println("***********************************************");

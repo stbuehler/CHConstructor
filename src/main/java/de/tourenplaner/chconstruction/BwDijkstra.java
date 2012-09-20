@@ -29,7 +29,7 @@ public class BwDijkstra extends Dijkstra {
 		}
 		// otherwise we have to process pq until settling trg
 		boolean targetFound=false;
-		while ((!myQueue.isEmpty())&&(targetFound==false))
+		while ((!myQueue.isEmpty())&& !targetFound)
 		{
 			PQElement cur=myQueue.remove();
 			int cur_dist=cur.key;

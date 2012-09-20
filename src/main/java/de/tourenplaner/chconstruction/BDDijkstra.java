@@ -77,7 +77,7 @@ public class BDDijkstra {
 		
 		// otherwise we have to process pq until settling trg
 		boolean phaseFinished=false;
-		while ((!myQueue.isEmpty())&&(phaseFinished==false))
+		while ((!myQueue.isEmpty())&& !phaseFinished)
 		{
 			//System.out.print(".");
 			BDPQElement cur=myQueue.remove();
@@ -93,7 +93,7 @@ public class BDDijkstra {
 				if (cur_dist==distFwd[cur_node])
 				{
 					settledFwd[cur_node]=true;
-					if (settledBwd[cur_node]==true)		// ONLY WITHOUT CH !!!					
+					if (settledBwd[cur_node])		// ONLY WITHOUT CH !!!
 						phaseFinished=true;
 					for(int i=0; i<myGraph.nofOutEdges(cur_node); i++)
 					{
@@ -114,7 +114,7 @@ public class BDDijkstra {
 				if (cur_dist==distBwd[cur_node])
 				{
 					settledBwd[cur_node]=true;
-					if (settledFwd[cur_node]==true)
+					if (settledFwd[cur_node])
 						phaseFinished=true;
 					for(int i=0; i<myGraph.nofInEdges(cur_node); i++)
 					{
