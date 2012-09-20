@@ -78,7 +78,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>de.tourenplaner.chconstruction.Shopa2011</mainClass>
+              <mainClass>de.tourenplaner.chconstruction.Main</mainClass>
             </manifest>
           </archive>
         </configuration>

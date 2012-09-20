@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.Random;
 
 
-public class Shopa2011 {
+public class Main {
 
 	/**
 	 * @param args
