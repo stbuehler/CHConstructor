@@ -14,8 +14,11 @@ import java.io.OutputStream;
 /**
  * User: Peter Vollmer
  * Date: 10/8/12
- * Time: 11:24 AM
+ * Time: 12:51 PM
  */
-public interface WriteGraph {
-    void writeRAMGraph (OutputStream out, RAMGraph ramGraph);
+public class GraphWriterTXT implements GraphWriter {
+    @Override
+    public void writeRAMGraph(OutputStream out, RAMGraph ramGraph) {
+        //TODO
+    }
 }

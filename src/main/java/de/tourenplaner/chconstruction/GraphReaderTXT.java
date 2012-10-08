@@ -15,8 +15,12 @@ import java.io.InputStream;
 /**
  * User: Peter Vollmer
  * Date: 10/8/12
- * Time: 11:17 AM
+ * Time: 12:43 PM
  */
-public interface ReadGraph {
-    RAMGraph createRAMGraph(InputStream in) throws IOException;
+public class GraphReaderTXT implements GraphReader{
+    @Override
+    public RAMGraph createRAMGraph(InputStream in) throws IOException {
+        //TODO
+        return null;
+    }
 }
