@@ -173,9 +173,9 @@ public class Main {
                 }
             }
             if (cmd.hasOption("to")){
-                graphCH.writeGTXT(ostream);
+                new GraphWriterTXTFunke().writeRAMGraph(ostream, graphCH);
             } else {
-                graphCH.writeBIN(ostream);
+                new GraphWriterBinaryFunke().writeRAMGraph(ostream,graphCH);
             }
 
             withChBench(prunedGraph, graphCH);
