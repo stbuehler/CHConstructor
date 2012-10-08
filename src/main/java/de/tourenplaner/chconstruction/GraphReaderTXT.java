@@ -9,8 +9,11 @@
 
 package de.tourenplaner.chconstruction;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.regex.Pattern;
 
 /**
  * User: Peter Vollmer
@@ -20,7 +23,62 @@ import java.io.InputStream;
 public class GraphReaderTXT implements GraphReader{
     @Override
     public RAMGraph createRAMGraph(InputStream in) throws IOException {
-        //TODO
-        return null;
+
+        int nofNodes;
+        int nofEdges;
+
+
+        long curTime=System.currentTimeMillis();
+
+        BufferedReader inb = new BufferedReader(new InputStreamReader(in));
+        String line = inb.readLine();
+        while (line != null && line.trim().startsWith("#")) {
+            line = inb.readLine();
+        }
+        nofNodes = line != null ? Integer.parseInt(line) : 0;
+
+        line = inb.readLine();
+        nofEdges = line != null ? Integer.parseInt(line) : 0;
+
+        RAMGraph graph = new RAMGraph(nofNodes,nofEdges);
+        float x,y;
+        int altID;
+        String[] splittedLine;
+        for(int i=0; i<nofNodes; i++) {
+            splittedLine = COMPILE.split(inb.readLine());
+            x=Float.parseFloat(splittedLine[1]);
+            y=Float.parseFloat(splittedLine[2]);
+            //altID[i]=i;
+            altID=Integer.parseInt(splittedLine[3]);
+            graph.addNode(x,y,altID);
+
+            if ((i%(nofNodes/10))==0)
+            {
+                System.out.print((10*i/(nofNodes/10)+"% "));
+            }
+        }
+
+        int edgeSource,edgeTarget,edgeWeight;
+        for(int i=0; i<nofEdges; i++) {
+            splittedLine = COMPILE.split(inb.readLine());
+            edgeSource=Integer.parseInt(splittedLine[0]);
+            edgeTarget=Integer.parseInt(splittedLine[1]);
+            edgeWeight=Integer.parseInt(splittedLine[2]);
+            graph.addEdge(edgeSource,edgeTarget,edgeWeight);
+
+            if ((i%(nofEdges/10))==0)
+            {
+                System.out.print((10*i/(nofEdges/10)+"% "));
+            }
+        }
+
+        System.out.println("Parsing took "+(System.currentTimeMillis()-curTime));
+        graph.setupOffsets();
+
+        System.out.println("Read graph with "+nofNodes+
+                " vertices and "+nofEdges+" edges in time "+(System.currentTimeMillis()-curTime)+"ms");
+        return graph;
     }
+
+    private static final Pattern COMPILE = Pattern.compile(" ");
 }

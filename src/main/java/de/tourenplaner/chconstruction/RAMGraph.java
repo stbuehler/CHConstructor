@@ -435,54 +435,6 @@ public class RAMGraph extends SGraph {
 		System.out.println("We have found "+count_shortcuts+" shortcuts");
 	}
 
-    private static final Pattern COMPILE = Pattern.compile(" ");
-	
-	void readGTXT(InputStream istream)	throws IOException {
-        long curTime=System.currentTimeMillis();
-
-        BufferedReader inb = new BufferedReader(new InputStreamReader(istream));
-        String line = inb.readLine();
-        while (line != null && line.trim().startsWith("#")) {
-            line = inb.readLine();
-        }
-        nofNodes = line != null ? Integer.parseInt(line) : 0;
-
-        line = inb.readLine();
-        nofEdges = line != null ? Integer.parseInt(line) : 0;
-        setupMemory();
-        String[] splittedLine;
-        for(int i=0; i<nofNodes; i++) {
-            splittedLine = COMPILE.split(inb.readLine());
-            xCoord[i]=Float.parseFloat(splittedLine[1]);
-            yCoord[i]=Float.parseFloat(splittedLine[2]);
-            //altID[i]=i;
-            altID[i]=Integer.parseInt(splittedLine[3]);
-
-            if ((i%(nofNodes/10))==0)
-            {
-                System.out.print((10*i/(nofNodes/10)+"% "));
-            }
-        }
-
-        for(int i=0; i<nofEdges; i++) {
-            splittedLine = COMPILE.split(inb.readLine());
-            edgeSource[i]=Integer.parseInt(splittedLine[0]);
-            edgeTarget[i]=Integer.parseInt(splittedLine[1]);
-            edgeWeight[i]=Integer.parseInt(splittedLine[2]);
-
-            if ((i%(nofEdges/10))==0)
-            {
-                System.out.print((10*i/(nofEdges/10)+"% "));
-            }
-        }
-
-        System.out.println("Parsing took "+(System.currentTimeMillis()-curTime));
-        setupOffsets();
-
-        System.out.println("Read graph with "+nofNodes+
-                " vertices and "+nofEdges+" edges in time "+(System.currentTimeMillis()-curTime)+"ms");
-
-	}
 
 	void writeGTXT(OutputStream ostream) throws IOException	{
 		long curTime=System.currentTimeMillis();
@@ -576,69 +528,15 @@ public class RAMGraph extends SGraph {
 
         System.out.println("Wrote BIN file in time "+(System.currentTimeMillis()-curTime));
 	}
-	void readBIN(InputStream istream) throws IOException {
-		long curTime=System.currentTimeMillis();
-
-          // ... wrap the stream
-          DataInputStream data_in = new DataInputStream (istream);
 
 
-          // read # vertices and edges
-          nofNodes=data_in.readInt();
-          nofEdges=data_in.readInt();
-          System.out.println("Reading "+nofNodes+" vertices and "+nofEdges+
-                            " edges");
-          setupMemory();
-
-          // read node data
-          for(int i=0; i<nofNodes; i++)
-          {
-              xCoord[i]=data_in.readFloat();
-              yCoord[i]=data_in.readFloat();
-          }
-          for(int i=0; i<nofNodes; i++)
-          {
-              altID[i]=data_in.readInt();
-          }
-          for(int i=0; i<nofNodes; i++)
-          {
-              level[i]=data_in.readInt();
-          }
-          for(int i=0; i<nofNodes+1; i++)
-          {
-              outEdgeOffset[i]=data_in.readInt();
-          }
-          for(int i=0; i<nofNodes+1; i++)
-          {
-              inEdgeOffset[i]=data_in.readInt();
-          }
-
-          // write-out edge data
-          for(int j=0; j<nofEdges; j++)
-          {
-              outEdgeList[j]=data_in.readInt();
-          }
-          for(int j=0; j<nofEdges; j++)
-          {
-              inEdgeList[j]=data_in.readInt();
-          }
-
-          for(int i=0; i<nofEdges; i++)
-          {
-              edgeSource[i]=data_in.readInt();
-              edgeTarget[i]=data_in.readInt();
-              edgeWeight[i]=data_in.readInt();
-              if (edgeWeight[i]<=0)
-                  edgeWeight[i]=1;
-          }
-          for(int i=0; i<nofEdges; i++)
-          {
-              edgeSkippedA[i]=data_in.readInt();
-              edgeSkippedB[i]=data_in.readInt();
-          }
-         System.out.println("Read BIN file in time "+(System.currentTimeMillis()-curTime));
-	}
-	
+    void addNode(float _x, float _y, int _altID){
+        assert(nodesAdded<nofNodes);
+        xCoord[nodesAdded]=_x;
+        yCoord[nodesAdded]=_y;
+        altID[nodesAdded]=_altID;
+        nodesAdded++;
+    }
 
 	int addNode(float _x, float _y, int _altID, int _level)
 	{
@@ -659,6 +557,14 @@ public class RAMGraph extends SGraph {
 		altID[_pos]=_altID;
 		level[_pos]=_level;
 	}
+
+    void addEdge(int _src, int _trg ,int _weight){
+        edgeSource[edgesAdded]=_src;
+        edgeTarget[edgesAdded]=_trg;
+        edgeWeight[edgesAdded]=_weight;
+        edgesAdded++;
+    }
+
 	void addEdge(int _src, int _trg, int _weight, int _skipA, int _skipB)
 	{
 		edgeSource[edgesAdded]=_src;

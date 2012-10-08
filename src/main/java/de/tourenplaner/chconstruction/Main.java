@@ -119,11 +119,11 @@ public class Main {
                istream = new BufferedInputStream(new FileInputStream(cmd.getOptionValue('i')));
            }
 
-            RAMGraph ramGraph=new RAMGraph();
+            RAMGraph ramGraph;
             if (cmd.hasOption("ti")){
-                ramGraph.readGTXT(istream);
+                ramGraph = new GraphReaderTXT().createRAMGraph(istream);
             } else {
-                ramGraph.readBIN(istream);
+                ramGraph = new GraphReaderBinaryFunke().createRAMGraph(istream);
             }
 
             ramGraph.sanityCheck();
@@ -131,7 +131,7 @@ public class Main {
 
             RAMGraph prunedGraph=ramGraph.pruneGraph();
             preCHBenchTest(ramGraph, prunedGraph);
-            ramGraph=prunedGraph;
+            ramGraph=null;
 
             CHConstructor myCH=new CHConstructor(prunedGraph);
             long overallTime=System.currentTimeMillis();
