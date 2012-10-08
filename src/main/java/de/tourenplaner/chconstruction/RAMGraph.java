@@ -48,8 +48,12 @@ public class RAMGraph extends SGraph {
 	
 	
 	
-	RAMGraph()
+	RAMGraph(int nofNodes, int nofEdges)
 	{
+        this.nofNodes = nofNodes;
+        this.nofEdges = nofEdges;
+        nodesAdded=edgesAdded=0;
+        setupMemory();
 	}
 
 	RAMGraph(RAMGraph _original)
@@ -103,9 +107,8 @@ public class RAMGraph extends SGraph {
 	
 	RAMGraph compressGraph()	// creates new graph object with exactly added nodes/edges
 	{
-		RAMGraph resultGraph=new RAMGraph();
-		resultGraph.createGraphSkeleton(nodesAdded, edgesAdded);
-		
+		RAMGraph resultGraph=new RAMGraph(nodesAdded,edgesAdded);
+
 		for(int i=0; i<nodesAdded; i++)
 			resultGraph.addNode(xCoord(i), yCoord(i), altNodeID(i), level[i]);
 		for(int j=0; j<edgesAdded; j++)
@@ -118,6 +121,7 @@ public class RAMGraph extends SGraph {
 		
 		return resultGraph;
 	}
+
 	
 	void setupOffsets()	// computes edgeOffsets for given vertices and edges
 	{
@@ -219,7 +223,7 @@ public class RAMGraph extends SGraph {
 	// get rid of superfluous edges
 	{
 		int selfLoops=0;
-		RAMGraph resultGraph=new RAMGraph();
+
 		boolean [] survivorEdge=new boolean[nofEdges()];
 		for(int j=0; j<nofEdges(); j++)
 			survivorEdge[j]=true;
@@ -247,8 +251,8 @@ public class RAMGraph extends SGraph {
 		for(int j=0; j<nofEdges(); j++)
 			if (survivorEdge[j])
 				newNofEdges++;
-		resultGraph.createGraphSkeleton(nofNodes(), newNofEdges);
-		
+        RAMGraph resultGraph=new RAMGraph(nofNodes(),newNofEdges);
+
 		for(int i=0; i<nofNodes(); i++)
 			resultGraph.addNode(xCoord(i), yCoord(i), altNodeID(i), level[i]);
 		for(int j=0; j<nofEdges(); j++)
@@ -269,8 +273,7 @@ public class RAMGraph extends SGraph {
 	{
 		// rearrange graph according to levels of the nodes (small levels first)
 		// does not rearrange within the nodes of one level
-		RAMGraph resultGraph=new RAMGraph();
-		resultGraph.createGraphSkeleton(nodesAdded, edgesAdded);
+		RAMGraph resultGraph=new RAMGraph(nodesAdded,edgesAdded);
 
 		System.out.println("We have a graph with "+nodesAdded+" nodes and "+edgesAdded+" edges");
 		int [] old2new=new int[nodesAdded];
@@ -636,13 +639,7 @@ public class RAMGraph extends SGraph {
          System.out.println("Read BIN file in time "+(System.currentTimeMillis()-curTime));
 	}
 	
-	void createGraphSkeleton(int _nodes, int _edges)
-	{
-		nofNodes=_nodes;
-		nofEdges=_edges;
-		nodesAdded=edgesAdded=0;
-		setupMemory();
-	}
+
 	int addNode(float _x, float _y, int _altID, int _level)
 	{
 		assert(nodesAdded<nofNodes);
