@@ -46,6 +46,8 @@ public abstract class SGraph {
 	abstract float yCoord(int nodeID);
 	
 	abstract int altNodeID(int nodeID);
+    abstract int height (int nodeID);
+    abstract int OSMID (int nodeID);
 	abstract int level(int nodeID);
 	
 	
@@ -60,6 +62,7 @@ public abstract class SGraph {
 	abstract int edgeWeight(int edgeID);
 	abstract int edgeSource(int edgeID);	
 	abstract int edgeTarget(int edgeID);
+    abstract int edgeType(int edgeID);
 	abstract int edgeSkippedA(int edgeID);
 	abstract int edgeSkippedB(int edgeID);
 }

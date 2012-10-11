@@ -173,7 +173,7 @@ public class Main {
                 }
             }
             if (cmd.hasOption("to")){
-                new GraphWriterTXTFunke().writeRAMGraph(ostream, graphCH);
+                new GraphWriterTXTTourenplaner().writeRAMGraph(ostream, graphCH);
             } else {
                 new GraphWriterBinaryFunke().writeRAMGraph(ostream,graphCH);
             }

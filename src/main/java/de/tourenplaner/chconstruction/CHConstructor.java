@@ -39,14 +39,14 @@ public class CHConstructor {
 		tempGraph=new RAMGraph(myGraph.nofNodes(), myGraph.nofEdges());
 		for(int i=0; i<myGraph.nofNodes(); i++)	// first add the original graph
 		{
-			myCHGraph.addNode(myGraph.xCoord(i), _myGraph.yCoord(i), myGraph.altNodeID(i), Integer.MAX_VALUE);
-			tempGraph.addNode(myGraph.xCoord(i), _myGraph.yCoord(i), i, Integer.MAX_VALUE); // here alt denotes ID
+			myCHGraph.addNode(myGraph.xCoord(i), _myGraph.yCoord(i), myGraph.altNodeID(i), myGraph.height(i), myGraph.OSMID(i), Integer.MAX_VALUE);
+			tempGraph.addNode(myGraph.xCoord(i), _myGraph.yCoord(i), i, myGraph.height(i), myGraph.OSMID(i), Integer.MAX_VALUE); // here alt denotes ID
 		}
 		for(int j=0; j<myGraph.nofEdges(); j++)
 		{
-			int orgSrc=myGraph.edgeSource(j), orgTrg=myGraph.edgeTarget(j), orgWeight=myGraph.edgeWeight(j);
-			myCHGraph.addEdge(orgSrc, orgTrg, orgWeight, -1, -1);
-			tempGraph.addEdge(orgSrc, orgTrg, orgWeight, -1, -1);
+			int orgSrc=myGraph.edgeSource(j), orgTrg=myGraph.edgeTarget(j), orgWeight=myGraph.edgeWeight(j), orgType=myGraph.edgeType(j);
+			myCHGraph.addEdge(orgSrc, orgTrg, orgWeight, orgType, -1, -1);
+			tempGraph.addEdge(orgSrc, orgTrg, orgWeight, orgType, -1, -1);
 		}
 		tempGraph.setupOffsets();
 		
@@ -278,7 +278,7 @@ public class CHConstructor {
 		for(int i=0; i<tempGraph.nofNodes(); i++)
 			if(!contracted[i])
 			{
-				old2new[i]=newTempGraph.addNode(tempGraph.xCoord(i), tempGraph.yCoord(i), tempGraph.altNodeID(i), 0);
+				old2new[i]=newTempGraph.addNode(tempGraph.xCoord(i), tempGraph.yCoord(i), tempGraph.altNodeID(i),tempGraph.height(i),tempGraph.OSMID(i), 0);
 			}
 			else
 			{
@@ -290,10 +290,10 @@ public class CHConstructor {
 		// copy surviving edges to newTempGraph
 		for(int j=0; j<tempGraph.nofEdges(); j++)
 		{
-			int curSrc=tempGraph.edgeSource(j), curTrg=tempGraph.edgeTarget(j), curWgt=tempGraph.edgeWeight(j);
+			int curSrc=tempGraph.edgeSource(j), curTrg=tempGraph.edgeTarget(j), curWgt=tempGraph.edgeWeight(j), curEdgeType=tempGraph.edgeType(j);
 			if ((!contracted[curSrc])&&(!contracted[curTrg]))	// copy edge to newTempGraph
 			{
-				newTempGraph.addEdge(old2new[curSrc], old2new[curTrg], curWgt, -2, -2);
+				newTempGraph.addEdge(old2new[curSrc], old2new[curTrg], curWgt, curEdgeType,-2, -2);
 			}
 		}
 		
@@ -301,8 +301,8 @@ public class CHConstructor {
 		
 		for(int j=0; j<totalNofSC; j++)
 		{
-			newTempGraph.addEdge(old2new[srcSCfinal[j]], old2new[trgSCfinal[j]], wgtSCfinal[j], -2,-2);
-			myCHGraph.addEdge(tempGraph.altNodeID(srcSCfinal[j]), tempGraph.altNodeID(trgSCfinal[j]), wgtSCfinal[j], -2,-2);
+			newTempGraph.addEdge(old2new[srcSCfinal[j]], old2new[trgSCfinal[j]], wgtSCfinal[j], -1, -2,-2);
+			myCHGraph.addEdge(tempGraph.altNodeID(srcSCfinal[j]), tempGraph.altNodeID(trgSCfinal[j]), wgtSCfinal[j], -1, -2,-2);
 		}
 		
 		newTempGraph.setupOffsets();

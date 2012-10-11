@@ -19,8 +19,12 @@ public class RAMGraph extends SGraph {
 	// DATA for VERTICES
 	float [] xCoord;		 
 	float [] yCoord;
-	int []	altID;			// EXT; alternative  ID of node if it was derived from another network; for contracted
+	int []	altID;// EXT; alternative  ID of node if it was derived from another network; for contracted
 							// network in particular the original ID
+    int [] height;
+
+    int [] OSMID;
+
 	int [] level;			// hold level in contraction hierarchy
 
 	int [] outEdgeOffset;	// outEdges[i] denotes the start of i's outgoing edges in the edgeList
@@ -36,6 +40,7 @@ public class RAMGraph extends SGraph {
 	int [] edgeSource;		// source of i-th edge
 	int [] edgeTarget;		// target of i-th edge
 	int [] edgeWeight;		// cost of i-th edge
+    int [] edgeType;    // Roadtype of i-th edge
 	int [] edgeSkippedA;	// ID of the first skipped edge (in the previous network) in case of shortcuts
 	int [] edgeSkippedB;	// ID of the second skipped edge
 	
@@ -66,6 +71,8 @@ public class RAMGraph extends SGraph {
 			xCoord[i]=_original.xCoord[i];
 			yCoord[i]=_original.yCoord[i];
 			altID[i]=_original.altID[i];
+            height[i]=_original.height[i];
+            OSMID[i]=_original.OSMID[i];
 			level[i]=_original.level[i];
 			outEdgeOffset[i]=_original.outEdgeOffset[i];
 			inEdgeOffset[i]=_original.inEdgeOffset[i];
@@ -91,7 +98,9 @@ public class RAMGraph extends SGraph {
     	xCoord=new float[nofNodes];
 		yCoord=new float[nofNodes];
 		altID=new int[nofNodes];
-		level=new int[nofNodes];
+        height=new int[nofNodes];
+        OSMID=new int[nofNodes];
+        level=new int[nofNodes];
 		outEdgeOffset=new int[nofNodes+1];
 		inEdgeOffset=new int[nofNodes+1];
 		
@@ -101,6 +110,7 @@ public class RAMGraph extends SGraph {
 		edgeSource=new int[nofEdges];
 		edgeTarget=new int[nofEdges];
 		edgeWeight=new int[nofEdges];
+        edgeType = new int[nofEdges];
 		edgeSkippedA=new int[nofEdges];
 		edgeSkippedB=new int[nofEdges];		
 	}
@@ -110,12 +120,12 @@ public class RAMGraph extends SGraph {
 		RAMGraph resultGraph=new RAMGraph(nodesAdded,edgesAdded);
 
 		for(int i=0; i<nodesAdded; i++)
-			resultGraph.addNode(xCoord(i), yCoord(i), altNodeID(i), level[i]);
+			resultGraph.addNode(xCoord(i), yCoord(i), altNodeID(i), height(i), OSMID(i), level[i]);
 		for(int j=0; j<edgesAdded; j++)
 		{
 			int curSrc=edgeSource(j), curTrg=edgeTarget(j), curWeight=edgeWeight(j),
 			curA=edgeSkippedA(j), curB=edgeSkippedB(j);
-			resultGraph.addEdge(curSrc, curTrg, curWeight, curA, curB);		
+			resultGraph.addEdge(curSrc, curTrg, curWeight,-1, curA, curB);
 		}
 		resultGraph.setupOffsets();
 		
@@ -254,14 +264,14 @@ public class RAMGraph extends SGraph {
         RAMGraph resultGraph=new RAMGraph(nofNodes(),newNofEdges);
 
 		for(int i=0; i<nofNodes(); i++)
-			resultGraph.addNode(xCoord(i), yCoord(i), altNodeID(i), level[i]);
+			resultGraph.addNode(xCoord(i), yCoord(i), altNodeID(i), height(i), OSMID(i), level[i]);
 		for(int j=0; j<nofEdges(); j++)
 		{
 			if (survivorEdge[j])
 			{
 				int curSrc=edgeSource(j), curTrg=edgeTarget(j), curWeight=edgeWeight(j),
 				curA=edgeSkippedA(j), curB=edgeSkippedB(j);
-				resultGraph.addEdge(curSrc, curTrg, curWeight, curA, curB);
+				resultGraph.addEdge(curSrc, curTrg, curWeight, -1, curA, curB);
 			}
 		}
 		resultGraph.setupOffsets();
@@ -314,7 +324,7 @@ public class RAMGraph extends SGraph {
 		{// iterate through all levels and put nodes in respective order
 			assert(levelCount[level[i]]>0);
 			old2new[i]=levelOffset[level[i]+1]-levelCount[level[i]];
-			resultGraph.addNodeAt(xCoord[i], yCoord[i], altID[i], level[i], old2new[i]);
+			resultGraph.addNodeAt(xCoord[i], yCoord[i], altID[i],height[i],OSMID[i], level[i], old2new[i]);
 			levelCount[level[i]]--;
 		}
 		for(int i=0; i<nodesAdded; i++)
@@ -325,7 +335,7 @@ public class RAMGraph extends SGraph {
 
 			int curSrc=edgeSource(j), curTrg=edgeTarget(j), curWeight=edgeWeight(j),
 					curA=edgeSkippedA(j), curB=edgeSkippedB(j);
-			resultGraph.addEdge(old2new[curSrc], old2new[curTrg], curWeight, curA, curB);
+			resultGraph.addEdge(old2new[curSrc], old2new[curTrg], curWeight, -1, curA, curB);
 
 		}
 		System.out.println("Before sorting");
@@ -436,47 +446,55 @@ public class RAMGraph extends SGraph {
 	}
 
 
-    void addNode(float _x, float _y, int _altID){
+    void addNode(float _x, float _y, int _altID, int _height, int _OSMID){
         assert(nodesAdded<nofNodes);
         xCoord[nodesAdded]=_x;
         yCoord[nodesAdded]=_y;
         altID[nodesAdded]=_altID;
+        height[nodesAdded]=_height;
+        OSMID[nodesAdded]=_OSMID;
         nodesAdded++;
     }
 
-	int addNode(float _x, float _y, int _altID, int _level)
+	int addNode(float _x, float _y, int _altID, int _height, int _OSMID, int _level)
 	{
 		assert(nodesAdded<nofNodes);
 		xCoord[nodesAdded]=_x;
 		yCoord[nodesAdded]=_y;
 		altID[nodesAdded]=_altID;
+        height[nodesAdded]=_height;
+        OSMID[nodesAdded]=_OSMID;
 		level[nodesAdded]=_level;
 		nodesAdded++;
 		return (nodesAdded-1);	// return ID of added node
 	}
-	void addNodeAt(float _x, float _y, int _altID, int _level, int _pos)
+	void addNodeAt(float _x, float _y, int _altID, int _height, int _OSMID, int _level, int _pos)
 	{	// add node at specified position; voids nodesAdded variable!!!!
 		nodesAdded=nofNodes;
 		assert(_pos<nofNodes);
 		xCoord[_pos]=_x;
 		yCoord[_pos]=_y;
 		altID[_pos]=_altID;
-		level[_pos]=_level;
+        height[_pos]=_height;
+		OSMID[_pos]= _OSMID;
+        level[_pos]=_level;
 	}
 
-    void addEdge(int _src, int _trg ,int _weight){
+    void addEdge(int _src, int _trg ,int _weight, int _edgeType){
         edgeSource[edgesAdded]=_src;
         edgeTarget[edgesAdded]=_trg;
         edgeWeight[edgesAdded]=_weight;
+        edgeType[edgesAdded] =_edgeType;
         edgesAdded++;
     }
 
-	void addEdge(int _src, int _trg, int _weight, int _skipA, int _skipB)
+	void addEdge(int _src, int _trg, int _weight, int _edgeType, int _skipA, int _skipB)
 	{
 		edgeSource[edgesAdded]=_src;
 		edgeTarget[edgesAdded]=_trg;
 		edgeWeight[edgesAdded]=_weight;
 		edgeSkippedA[edgesAdded]=_skipA;
+        edgeType[edgesAdded] =_edgeType;
 		edgeSkippedB[edgesAdded]=_skipB;
 		edgesAdded++;
 	}
@@ -497,6 +515,16 @@ public class RAMGraph extends SGraph {
 	{
 		return altID[nodeID];
 	}
+
+    int height (int nodeID)
+    {
+        return height[nodeID];
+    }
+
+    int OSMID (int nodeID)
+    {
+        return OSMID[nodeID];
+    }
 	
 	int level(int nodeID)
 	{
@@ -520,10 +548,7 @@ public class RAMGraph extends SGraph {
 		return inEdgeList[inEdgeOffset[nodeID]+edgePos];
 	}
 	
-	int edgeWeight(int edgeID)
-	{
-		return edgeWeight[edgeID];
-	}
+
 	int edgeSource(int edgeID)
 	{
 		return edgeSource[edgeID];
@@ -532,6 +557,14 @@ public class RAMGraph extends SGraph {
 	{
 		return edgeTarget[edgeID];
 	}
+    int edgeWeight(int edgeID)
+    {
+        return edgeWeight[edgeID];
+    }
+    int edgeType(int edgeID)
+    {
+        return edgeType[edgeID];
+    }
 	int edgeSkippedA(int edgeID)
 	{
 		return edgeSkippedA[edgeID];
