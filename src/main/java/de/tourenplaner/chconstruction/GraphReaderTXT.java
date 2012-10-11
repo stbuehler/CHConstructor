@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
 
 /**
  * User: Peter Vollmer
- * Date: 10/8/12
- * Time: 12:43 PM
+ * Date: 10/9/12
+ * Time: 3:38 PM
  */
 public class GraphReaderTXT implements GraphReader{
     @Override
@@ -42,34 +42,50 @@ public class GraphReaderTXT implements GraphReader{
 
         RAMGraph graph = new RAMGraph(nofNodes,nofEdges);
         float x,y;
-        int altID;
+        int altID,OSMID,height;
         String[] splittedLine;
         for(int i=0; i<nofNodes; i++) {
             splittedLine = COMPILE.split(inb.readLine());
-            x=Float.parseFloat(splittedLine[1]);
-            y=Float.parseFloat(splittedLine[2]);
             //altID[i]=i;
-            altID=Integer.parseInt(splittedLine[3]);
-            graph.addNode(x,y,altID);
+            if (splittedLine.length == 5){
+                altID=Integer.parseInt(splittedLine[0]);
+                OSMID=Integer.parseInt(splittedLine[1]);
+                x=Float.parseFloat(splittedLine[2]);
+                y=Float.parseFloat(splittedLine[3]);
+                height=Integer.parseInt(splittedLine[4]);
 
-            if ((i%(nofNodes/10))==0)
-            {
-                System.out.print((10*i/(nofNodes/10)+"% "));
+                graph.addNode(x,y,altID,height,OSMID);
+
+                if ((i%(nofNodes/10))==0)
+                {
+                    System.out.print((10*i/(nofNodes/10)+"% "));
+                }
+            }else {
+                graph.nofNodes--;
             }
         }
 
-        int edgeSource,edgeTarget,edgeWeight;
+        int edgeSource,edgeTarget,edgeWeight,edgeType;
         for(int i=0; i<nofEdges; i++) {
             splittedLine = COMPILE.split(inb.readLine());
-            edgeSource=Integer.parseInt(splittedLine[0]);
-            edgeTarget=Integer.parseInt(splittedLine[1]);
-            edgeWeight=Integer.parseInt(splittedLine[2]);
-            graph.addEdge(edgeSource,edgeTarget,edgeWeight);
+            if (splittedLine.length == 4){
+                edgeSource=Integer.parseInt(splittedLine[0]);
+                edgeTarget=Integer.parseInt(splittedLine[1]);
+                edgeWeight=Integer.parseInt(splittedLine[2]);
+                edgeType =Integer.parseInt(splittedLine[3]);
+                graph.addEdge(edgeSource,edgeTarget,edgeWeight,edgeType);
 
-            if ((i%(nofEdges/10))==0)
-            {
-                System.out.print((10*i/(nofEdges/10)+"% "));
+                if ((i%(nofEdges/10))==0)
+                {
+                    System.out.print((10*i/(nofEdges/10)+"% "));
+                }
+            }else{
+                graph.nofEdges--;
             }
+        }
+
+        if (nofNodes != graph.nofNodes() | nofEdges != graph.nofEdges()){
+            graph = new RAMGraph(graph);
         }
 
         System.out.println("Parsing took "+(System.currentTimeMillis()-curTime));
