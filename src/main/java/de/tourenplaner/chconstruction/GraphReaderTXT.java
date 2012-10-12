@@ -21,6 +21,84 @@ import java.util.regex.Pattern;
  * Time: 3:38 PM
  */
 public class GraphReaderTXT implements GraphReader{
+
+    private static final Pattern COMPILE = Pattern.compile(" ");
+
+    private int calcWeight (int length, int roadType){
+        double weigth;
+        switch (roadType){
+            //motorway
+            case 1:
+                weigth = (length*1.3)/1.3;
+                break;
+            //motorway link
+            case 2:
+                weigth = (length*1.3)/1.0;
+                break;
+            //primary
+            case 3:
+                weigth = (length*1.3)/0.7;
+                break;
+            //primary link
+            case 4:
+                weigth = (length*1.3)/0.7;
+                break;
+            //secondary
+            case 5:
+                weigth = (length*1.3)/0.65 ;
+                break;
+            //secondary link
+            case 6:
+                weigth = (length*1.3)/0.65;
+                break;
+            //tertiary
+            case 7:
+                weigth = (length*1.3)/0.6;
+                break;
+            //tertiary link
+            case 8:
+                weigth = (length*1.3)/0.6;
+                break;
+            //trunk
+            case 9:
+                weigth = (length*1.3)/0.8;
+                break;
+            //trunk link
+            case 10:
+                weigth = (length*1.3)/0.8;
+                break;
+            //unclassified
+            case 11:
+                weigth = (length*1.3)/0.25;
+                break;
+            //residential
+            case 12:
+                weigth = (length*1.3)/0.45;
+                break;
+            //living street
+            case 13:
+                weigth = (length*1.3)/0.3;
+                break;
+            //road
+            case 14:
+                weigth = (length*1.3)/0.25;
+                break;
+            //service
+            case 15:
+                weigth = (length*1.3)/0.3;
+                break;
+            //turning circle
+            case 16:
+                weigth = (length*1.3)/0.3;
+                break;
+            default:
+                weigth = (length*1.3)/0.5;
+        }
+
+
+        return (int)weigth;
+    }
+
     @Override
     public RAMGraph createRAMGraph(InputStream in) throws IOException {
 
@@ -65,15 +143,15 @@ public class GraphReaderTXT implements GraphReader{
             }
         }
 
-        int edgeSource,edgeTarget,edgeWeight,edgeType;
+        int edgeSource,edgeTarget,edgeWeight,edgeLength;
         for(int i=0; i<nofEdges; i++) {
             splittedLine = COMPILE.split(inb.readLine());
             if (splittedLine.length == 4){
                 edgeSource=Integer.parseInt(splittedLine[0]);
                 edgeTarget=Integer.parseInt(splittedLine[1]);
-                edgeWeight=Integer.parseInt(splittedLine[2]);
-                edgeType =Integer.parseInt(splittedLine[3]);
-                graph.addEdge(edgeSource,edgeTarget,edgeWeight,edgeType);
+                edgeLength = Integer.parseInt(splittedLine[2]);
+                edgeWeight=calcWeight(edgeLength,Integer.parseInt(splittedLine[3]));
+                graph.addEdge(edgeSource,edgeTarget,edgeWeight,edgeLength);
 
                 if ((i%(nofEdges/10))==0)
                 {
@@ -96,5 +174,5 @@ public class GraphReaderTXT implements GraphReader{
         return graph;
     }
 
-    private static final Pattern COMPILE = Pattern.compile(" ");
+
 }

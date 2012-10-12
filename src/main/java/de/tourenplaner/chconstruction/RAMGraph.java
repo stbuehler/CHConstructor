@@ -40,7 +40,7 @@ public class RAMGraph extends SGraph {
 	int [] edgeSource;		// source of i-th edge
 	int [] edgeTarget;		// target of i-th edge
 	int [] edgeWeight;		// cost of i-th edge
-    int [] edgeType;    // Roadtype of i-th edge
+    int [] edgeLength;      // euclidian distance
 	int [] edgeSkippedA;	// ID of the first skipped edge (in the previous network) in case of shortcuts
 	int [] edgeSkippedB;	// ID of the second skipped edge
 	
@@ -110,7 +110,7 @@ public class RAMGraph extends SGraph {
 		edgeSource=new int[nofEdges];
 		edgeTarget=new int[nofEdges];
 		edgeWeight=new int[nofEdges];
-        edgeType = new int[nofEdges];
+        edgeLength=new int[nofEdges];
 		edgeSkippedA=new int[nofEdges];
 		edgeSkippedB=new int[nofEdges];		
 	}
@@ -123,9 +123,9 @@ public class RAMGraph extends SGraph {
 			resultGraph.addNode(xCoord(i), yCoord(i), altNodeID(i), height(i), OSMID(i), level[i]);
 		for(int j=0; j<edgesAdded; j++)
 		{
-			int curSrc=edgeSource(j), curTrg=edgeTarget(j), curWeight=edgeWeight(j),
+			int curSrc=edgeSource(j), curTrg=edgeTarget(j), curWeight=edgeWeight(j), curLength=edgeLength(j),
 			curA=edgeSkippedA(j), curB=edgeSkippedB(j);
-			resultGraph.addEdge(curSrc, curTrg, curWeight,-1, curA, curB);
+			resultGraph.addEdge(curSrc, curTrg, curWeight, curLength, curA, curB);
 		}
 		resultGraph.setupOffsets();
 		
@@ -182,22 +182,25 @@ public class RAMGraph extends SGraph {
 	
 	void swapEdges(int e, int f)
 	{// swaps edges in EdgeArray at positions e and f
-		int src,trg,weight,skipA,skipB;
+		int src,trg,weight,length,skipA,skipB;
 		src=edgeSource[e];
 		trg=edgeTarget[e];
 		weight=edgeWeight[e];
+        length=edgeLength[e];
 		skipA=edgeSkippedA[e];
 		skipB=edgeSkippedB[e];
 		
 		edgeSource[e]=edgeSource[f];
 		edgeTarget[e]=edgeTarget[f];
 		edgeWeight[e]=edgeWeight[f];
+        edgeLength[e]=edgeLength[f];
 		edgeSkippedA[e]=edgeSkippedA[f];
 		edgeSkippedB[e]=edgeSkippedB[f];
 		
 		edgeSource[f]=src;
 		edgeTarget[f]=trg;
 		edgeWeight[f]=weight;
+        edgeLength[f]=length;
 		edgeSkippedA[f]=skipA;
 		edgeSkippedB[f]=skipB;
 	}
@@ -269,9 +272,9 @@ public class RAMGraph extends SGraph {
 		{
 			if (survivorEdge[j])
 			{
-				int curSrc=edgeSource(j), curTrg=edgeTarget(j), curWeight=edgeWeight(j),
+				int curSrc=edgeSource(j), curTrg=edgeTarget(j), curWeight=edgeWeight(j), curLength=edgeLength(j),
 				curA=edgeSkippedA(j), curB=edgeSkippedB(j);
-				resultGraph.addEdge(curSrc, curTrg, curWeight, -1, curA, curB);
+				resultGraph.addEdge(curSrc, curTrg, curWeight, curLength,curA, curB);
 			}
 		}
 		resultGraph.setupOffsets();
@@ -333,9 +336,9 @@ public class RAMGraph extends SGraph {
 		for(int j=0; j<edgesAdded; j++)
 		{
 
-			int curSrc=edgeSource(j), curTrg=edgeTarget(j), curWeight=edgeWeight(j),
+			int curSrc=edgeSource(j), curTrg=edgeTarget(j), curWeight=edgeWeight(j),curLength=edgeLength(j),
 					curA=edgeSkippedA(j), curB=edgeSkippedB(j);
-			resultGraph.addEdge(old2new[curSrc], old2new[curTrg], curWeight, -1, curA, curB);
+			resultGraph.addEdge(old2new[curSrc], old2new[curTrg], curWeight, curLength, curA, curB);
 
 		}
 		System.out.println("Before sorting");
@@ -480,21 +483,21 @@ public class RAMGraph extends SGraph {
         level[_pos]=_level;
 	}
 
-    void addEdge(int _src, int _trg ,int _weight, int _edgeType){
+    void addEdge(int _src, int _trg ,int _weight, int _length){
         edgeSource[edgesAdded]=_src;
         edgeTarget[edgesAdded]=_trg;
         edgeWeight[edgesAdded]=_weight;
-        edgeType[edgesAdded] =_edgeType;
+        edgeLength[edgesAdded]=_length;
         edgesAdded++;
     }
 
-	void addEdge(int _src, int _trg, int _weight, int _edgeType, int _skipA, int _skipB)
+	void addEdge(int _src, int _trg, int _weight, int _length, int _skipA, int _skipB)
 	{
 		edgeSource[edgesAdded]=_src;
 		edgeTarget[edgesAdded]=_trg;
 		edgeWeight[edgesAdded]=_weight;
+        edgeLength[edgesAdded]=_length;
 		edgeSkippedA[edgesAdded]=_skipA;
-        edgeType[edgesAdded] =_edgeType;
 		edgeSkippedB[edgesAdded]=_skipB;
 		edgesAdded++;
 	}
@@ -561,9 +564,9 @@ public class RAMGraph extends SGraph {
     {
         return edgeWeight[edgeID];
     }
-    int edgeType(int edgeID)
+    int edgeLength(int edgeID)
     {
-        return edgeType[edgeID];
+        return edgeLength[edgeID];
     }
 	int edgeSkippedA(int edgeID)
 	{

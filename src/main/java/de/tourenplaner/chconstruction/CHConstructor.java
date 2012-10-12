@@ -44,16 +44,16 @@ public class CHConstructor {
 		}
 		for(int j=0; j<myGraph.nofEdges(); j++)
 		{
-			int orgSrc=myGraph.edgeSource(j), orgTrg=myGraph.edgeTarget(j), orgWeight=myGraph.edgeWeight(j), orgType=myGraph.edgeType(j);
-			myCHGraph.addEdge(orgSrc, orgTrg, orgWeight, orgType, -1, -1);
-			tempGraph.addEdge(orgSrc, orgTrg, orgWeight, orgType, -1, -1);
+			int orgSrc=myGraph.edgeSource(j), orgTrg=myGraph.edgeTarget(j), orgWeight=myGraph.edgeWeight(j), orgLength=myGraph.edgeLength(j);
+			myCHGraph.addEdge(orgSrc, orgTrg, orgWeight, orgLength, -1, -1);
+			tempGraph.addEdge(orgSrc, orgTrg, orgWeight, orgLength, -1, -1);
 		}
 		tempGraph.setupOffsets();
 		
 		// tempGraph.sanityCheck();
 	}
 	
-	int contractNode(int curNode, Dijkstra myDijkstra, int [] srcSC, int [] trgSC, int[] wgtSC, int boundSC)	// return number of computed SCs
+	int contractNode(int curNode, Dijkstra myDijkstra, int [] srcSC, int [] trgSC, int[] wgtSC, int[] lgthSC, int boundSC)	// return number of computed SCs
 	{																											// stops if boundSC is reached
 		int nofSC=0;
 		for(int i=0; i<tempGraph.nofInEdges(curNode); i++)
@@ -65,6 +65,7 @@ public class CHConstructor {
 				int curTrgEdge=tempGraph.outEdgeID(curNode, j);
 				int curTrg=tempGraph.edgeTarget(curTrgEdge);
 				int weightSC=tempGraph.edgeWeight(curSrcEdge)+tempGraph.edgeWeight(curTrgEdge);
+                int lengthSC=tempGraph.edgeLength(curSrcEdge)+tempGraph.edgeLength(curTrgEdge);
 				myDijkstra.runDijkstra(curSrc, curTrg);
 				//if (d==weightSC) // better: check if pred[curTrg]==curNode and pred[curNode]==curSrc
 				if (((myDijkstra.pred(curTrg)==curNode)&&(myDijkstra.pred(curNode)==curSrc)))
@@ -72,6 +73,7 @@ public class CHConstructor {
 					srcSC[nofSC]=curSrc;
 					trgSC[nofSC]=curTrg;
 					wgtSC[nofSC]=weightSC;
+                    lgthSC[nofSC]=lengthSC;
 					nofSC++;
 				}
 				if (nofSC==boundSC) return boundSC;
@@ -143,9 +145,7 @@ public class CHConstructor {
 		int [] srcSCall=new int[allSCUB];
 		int [] trgSCall=new int[allSCUB];
 		int [] wgtSCall=new int[allSCUB];
-				
-		
-		
+        int [] lgthSCall=new int[allSCUB];
 		
 		
 		// instantiate Dijkstra
@@ -179,11 +179,12 @@ public class CHConstructor {
 			int [] srcSC=new int[boundSC];
 			int [] trgSC=new int[boundSC];
 			int [] wgtSC=new int[boundSC];
+            int [] lgthSC=new int[boundSC];
 			
 				
 			for(int i=0; i<candBound; i++)
 			{
-				int nofSC=contractNode(candidates[i], myDijkstra, srcSC, trgSC, wgtSC, boundSC);
+				int nofSC=contractNode(candidates[i], myDijkstra, srcSC, trgSC, wgtSC, lgthSC, boundSC);
 				int edgeDiff=nofSC-tempGraph.nofInEdges(candidates[i])-tempGraph.nofOutEdges(candidates[i]);
 				if (nofSC<boundSC)
 				{
@@ -195,8 +196,9 @@ public class CHConstructor {
 				{
 					srcSCall[tentNofSC]=srcSC[j];
 					trgSCall[tentNofSC]=trgSC[j];
-					wgtSCall[tentNofSC]=wgtSC[j];					
-					tentNofSC++;
+					wgtSCall[tentNofSC]=wgtSC[j];
+					lgthSCall[tentNofSC]=lgthSC[j];
+                    tentNofSC++;
 				}
 				contractionPQ.add(new PQElement(edgeDiff, i));
 				candSCoffset[i+1]=tentNofSC;
@@ -219,6 +221,7 @@ public class CHConstructor {
 		int [] srcSCfinal=new int[allSCUB];
 		int [] trgSCfinal=new int[allSCUB];
 		int [] wgtSCfinal=new int[allSCUB];
+        int [] lgthSCfinal = new int[allSCUB];
 		
 		int avgED=sumED/validED+1;
 		System.out.println("\n AvgED="+avgED+" validED="+validED);
@@ -244,6 +247,7 @@ public class CHConstructor {
 					srcSCfinal[totalNofSC]=srcSCall[i];
 					trgSCfinal[totalNofSC]=trgSCall[i];
 					wgtSCfinal[totalNofSC]=wgtSCall[i];
+                    lgthSCfinal[totalNofSC]=lgthSCall[i];
 					totalNofSC++;
 				}
 			}
@@ -274,7 +278,7 @@ public class CHConstructor {
 		 
 		RAMGraph newTempGraph=new RAMGraph(newNofNodes, newNofEdges);
 		int [] old2new=new int[tempGraph.nofNodes()];
-		
+
 		for(int i=0; i<tempGraph.nofNodes(); i++)
 			if(!contracted[i])
 			{
@@ -290,10 +294,10 @@ public class CHConstructor {
 		// copy surviving edges to newTempGraph
 		for(int j=0; j<tempGraph.nofEdges(); j++)
 		{
-			int curSrc=tempGraph.edgeSource(j), curTrg=tempGraph.edgeTarget(j), curWgt=tempGraph.edgeWeight(j), curEdgeType=tempGraph.edgeType(j);
+			int curSrc=tempGraph.edgeSource(j), curTrg=tempGraph.edgeTarget(j), curWgt=tempGraph.edgeWeight(j), curEdgeLength=tempGraph.edgeLength(j);
 			if ((!contracted[curSrc])&&(!contracted[curTrg]))	// copy edge to newTempGraph
 			{
-				newTempGraph.addEdge(old2new[curSrc], old2new[curTrg], curWgt, curEdgeType,-2, -2);
+				newTempGraph.addEdge(old2new[curSrc], old2new[curTrg], curWgt, curEdgeLength,-2, -2);
 			}
 		}
 		
@@ -301,8 +305,8 @@ public class CHConstructor {
 		
 		for(int j=0; j<totalNofSC; j++)
 		{
-			newTempGraph.addEdge(old2new[srcSCfinal[j]], old2new[trgSCfinal[j]], wgtSCfinal[j], -1, -2,-2);
-			myCHGraph.addEdge(tempGraph.altNodeID(srcSCfinal[j]), tempGraph.altNodeID(trgSCfinal[j]), wgtSCfinal[j], -1, -2,-2);
+			newTempGraph.addEdge(old2new[srcSCfinal[j]], old2new[trgSCfinal[j]], wgtSCfinal[j], lgthSCfinal[j], -2,-2);
+			myCHGraph.addEdge(tempGraph.altNodeID(srcSCfinal[j]), tempGraph.altNodeID(trgSCfinal[j]), wgtSCfinal[j], lgthSCfinal[j], -2,-2);
 		}
 		
 		newTempGraph.setupOffsets();

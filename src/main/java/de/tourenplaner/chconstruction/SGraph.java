@@ -62,7 +62,7 @@ public abstract class SGraph {
 	abstract int edgeWeight(int edgeID);
 	abstract int edgeSource(int edgeID);	
 	abstract int edgeTarget(int edgeID);
-    abstract int edgeType(int edgeID);
+    abstract int edgeLength(int edgeID);
 	abstract int edgeSkippedA(int edgeID);
 	abstract int edgeSkippedB(int edgeID);
 }
