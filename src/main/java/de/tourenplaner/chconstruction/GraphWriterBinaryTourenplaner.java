@@ -20,14 +20,12 @@ import java.nio.charset.Charset;
  * Date: 10/8/12
  * Time: 4:20 PM
  */
-public class GraphWriterBinaryTourenplaner implements GraphWriter{
+public class GraphWriterBinaryTourenplaner implements GraphWriter {
 
     private static final int version = 2;
 
     @Override
     public void writeRAMGraph(OutputStream out, RAMGraph ramGraph) throws IOException {
-
-        //TODO
 
         // 8388608 Bytes = 8 MB
         BufferedOutputStream bout = new BufferedOutputStream(out, 8388608);
@@ -45,8 +43,8 @@ public class GraphWriterBinaryTourenplaner implements GraphWriter{
 
         // Write nodes
         for (int i = 0; i < numNodes; i++) {
-            dout.writeInt((int)(ramGraph.xCoord(i)*10000000.0));
-            dout.writeInt((int)(ramGraph.yCoord(i)*10000000.0));
+            dout.writeInt((int) (ramGraph.xCoord(i) * 10000000.0));
+            dout.writeInt((int) (ramGraph.yCoord(i) * 10000000.0));
             dout.writeInt(ramGraph.height(i));
             dout.writeInt(ramGraph.level(i));
         }
@@ -56,7 +54,7 @@ public class GraphWriterBinaryTourenplaner implements GraphWriter{
             dout.writeInt(ramGraph.edgeSource(i));
             dout.writeInt(ramGraph.edgeTarget(i));
             dout.writeInt(ramGraph.edgeWeight(i));
-            dout.writeInt(ramGraph.edgeWeight(i));
+            dout.writeInt(ramGraph.edgeLength(i));
             dout.writeInt(ramGraph.edgeSkippedA(i));
             dout.writeInt(ramGraph.edgeSkippedB(i));
         }

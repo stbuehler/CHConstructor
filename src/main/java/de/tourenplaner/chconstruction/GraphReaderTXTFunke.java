@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * Date: 10/8/12
  * Time: 12:43 PM
  */
-public class GraphReaderTXTFunke implements GraphReader{
+public class GraphReaderTXTFunke implements GraphReader {
     @Override
     public RAMGraph createRAMGraph(InputStream in) throws IOException {
 
@@ -28,7 +28,7 @@ public class GraphReaderTXTFunke implements GraphReader{
         int nofEdges;
 
 
-        long curTime=System.currentTimeMillis();
+        long curTime = System.currentTimeMillis();
 
         BufferedReader inb = new BufferedReader(new InputStreamReader(in));
         String line = inb.readLine();
@@ -40,43 +40,41 @@ public class GraphReaderTXTFunke implements GraphReader{
         line = inb.readLine();
         nofEdges = line != null ? Integer.parseInt(line) : 0;
 
-        RAMGraph graph = new RAMGraph(nofNodes,nofEdges);
-        float x,y;
+        RAMGraph graph = new RAMGraph(nofNodes, nofEdges);
+        float x, y;
         int altID;
         String[] splittedLine;
-        for(int i=0; i<nofNodes; i++) {
+        for (int i = 0; i < nofNodes; i++) {
             splittedLine = COMPILE.split(inb.readLine());
-            x=Float.parseFloat(splittedLine[1]);
-            y=Float.parseFloat(splittedLine[2]);
+            x = Float.parseFloat(splittedLine[1]);
+            y = Float.parseFloat(splittedLine[2]);
             //altID[i]=i;
-            altID=Integer.parseInt(splittedLine[3]);
-            graph.addNode(x,y,altID,-1,-1);
+            altID = Integer.parseInt(splittedLine[3]);
+            graph.addNode(x, y, altID, -1, -1);
 
-            if ((i%(nofNodes/10))==0)
-            {
-                System.out.print((10*i/(nofNodes/10)+"% "));
+            if ((i % (nofNodes / 10)) == 0) {
+                System.out.print((10 * i / (nofNodes / 10) + "% "));
             }
         }
 
-        int edgeSource,edgeTarget,edgeWeight,edgeType;
-        for(int i=0; i<nofEdges; i++) {
+        int edgeSource, edgeTarget, edgeWeight, edgeType;
+        for (int i = 0; i < nofEdges; i++) {
             splittedLine = COMPILE.split(inb.readLine());
-            edgeSource=Integer.parseInt(splittedLine[0]);
-            edgeTarget=Integer.parseInt(splittedLine[1]);
-            edgeWeight=Integer.parseInt(splittedLine[2]);
-            graph.addEdge(edgeSource,edgeTarget,edgeWeight,-1);
+            edgeSource = Integer.parseInt(splittedLine[0]);
+            edgeTarget = Integer.parseInt(splittedLine[1]);
+            edgeWeight = Integer.parseInt(splittedLine[2]);
+            graph.addEdge(edgeSource, edgeTarget, edgeWeight, -1);
 
-            if ((i%(nofEdges/10))==0)
-            {
-                System.out.print((10*i/(nofEdges/10)+"% "));
+            if ((i % (nofEdges / 10)) == 0) {
+                System.out.print((10 * i / (nofEdges / 10) + "% "));
             }
         }
 
-        System.out.println("Parsing took "+(System.currentTimeMillis()-curTime));
+        System.out.println("Parsing took " + (System.currentTimeMillis() - curTime));
         graph.setupOffsets();
 
-        System.out.println("Read graph with "+nofNodes+
-                " vertices and "+nofEdges+" edges in time "+(System.currentTimeMillis()-curTime)+"ms");
+        System.out.println("Read graph with " + nofNodes +
+                " vertices and " + nofEdges + " edges in time " + (System.currentTimeMillis() - curTime) + "ms");
         return graph;
     }
 

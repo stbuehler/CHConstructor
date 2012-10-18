@@ -18,5 +18,5 @@ import java.io.OutputStream;
  * Time: 11:24 AM
  */
 public interface GraphWriter {
-    void writeRAMGraph (OutputStream out, RAMGraph ramGraph) throws IOException;
+    void writeRAMGraph(OutputStream out, RAMGraph ramGraph) throws IOException;
 }

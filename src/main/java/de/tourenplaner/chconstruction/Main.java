@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class Main {
 
-    private static void preCHBenchTest(RAMGraph graph, RAMGraph prunedGraph){
+    private static void preCHBenchTest(RAMGraph graph, RAMGraph prunedGraph) {
         Dijkstra myDijkstra = new Dijkstra(graph);
         BDDijkstra myBDDijkstra = new BDDijkstra(prunedGraph);
         Random generator = new Random();
@@ -58,137 +58,161 @@ public class Main {
 
         for (int i = 0; i < 100; i++) {
             //if ((graphCH.level(src)>0)&&(graphCH.level(trg)>0))
-            {
-                curTime = System.nanoTime();
-                int dist = myDijkstra.runDijkstra(graphCH.altNodeID(src), graphCH.altNodeID(trg));
-                timeDelta = (System.nanoTime() - curTime) / 1000;
+
+            curTime = System.nanoTime();
+            int dist = myDijkstra.runDijkstra(graphCH.altNodeID(src), graphCH.altNodeID(trg));
+            timeDelta = (System.nanoTime() - curTime) / 1000;
 
 
-                curTime = System.nanoTime();
-                int dist2 = myCHDijkstra.runDijkstra(src, trg);
-                long timeDelta2 = (System.nanoTime() - curTime) / 1000;
-                {
-                    minDist = dist;
-                    System.out.println("Distance from " + graphCH.altNodeID(src) + " to " + graphCH.altNodeID(trg) + " is " + dist + " in time " + timeDelta);
-                    System.out.println("CH-Distance in CH from " + src + " to " + trg + " is " + dist2 + " in time " + timeDelta2);
-                    System.out.println("Levels are " + graphCH.level(src) + "/" + graphCH.level(trg));
-                    if (dist == Integer.MAX_VALUE)
-                        System.out.println("*******************************************************");
-                    // myDijkstra.printPath(trg);
-                    System.out.println();
-                    assert (dist == dist2);
-                }
+            curTime = System.nanoTime();
+            int dist2 = myCHDijkstra.runDijkstra(src, trg);
+            long timeDelta2 = (System.nanoTime() - curTime) / 1000;
 
-                src = generator.nextInt(prunedGraph.nofNodes());
-                trg = generator.nextInt(prunedGraph.nofNodes());
+            minDist = dist;
+            System.out.println("Distance from " + graphCH.altNodeID(src) + " to " + graphCH.altNodeID(trg) + " is " + dist + " in time " + timeDelta);
+            System.out.println("CH-Distance in CH from " + src + " to " + trg + " is " + dist2 + " in time " + timeDelta2);
+            System.out.println("Levels are " + graphCH.level(src) + "/" + graphCH.level(trg));
+            if (dist == Integer.MAX_VALUE)
+                System.out.println("*******************************************************");
+            // myDijkstra.printPath(trg);
+            System.out.println();
+            assert (dist == dist2);
+
+
+            src = generator.nextInt(prunedGraph.nofNodes());
+            trg = generator.nextInt(prunedGraph.nofNodes());
             }
 
-        }
     }
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
         CommandLineParser parser = new GnuParser();
         Options options = new Options();
 
-        options.addOption("ti","text-input", false, "Read input graph in text mode");
+        options.addOption("ti", "text-input", false, "Read input graph in text mode");
         options.addOption("to", "text-output", false, "Write output graph in text mode");
+        options.addOption("if", "input-format", true, "Choose from binfunk, textfunk, texttour");
+        options.addOption("of", "output-format", true, "Choose from binfunk, bintour, textfunk, texttour");
         options.addOption("i", "input-file", true, "The graph file to read from, use - for standard input");
         options.addOption("o", "output-file", true, "The graph file to write the result to, use - for standard output");
         options.addOption("h", "help", false, "Show this help message");
 
         BufferedInputStream istream;
+        String inputFormat = "texttour";
+        String outputFormat = "texttour";
+
         try {
             CommandLine cmd = parser.parse(options, args);
-            if (cmd.hasOption('h')){
+            if (cmd.hasOption('h')) {
                 HelpFormatter fmt = new HelpFormatter();
                 fmt.printHelp("chconstructor", options);
-                System.exit(0);
+                return;
             }
-            if (!cmd.hasOption("i")){
-                System.out.println("No input file specified, this is mandatory");
+            if (!cmd.hasOption("i")) {
+                System.err.println("No input file specified, this is mandatory");
                 HelpFormatter fmt = new HelpFormatter();
                 fmt.printHelp("chconstructor", options);
-                System.exit(0);
+                return;
             }
-           if (cmd.getOptionValue('i').equals("-")){
-               istream = new BufferedInputStream(System.in);
-           } else {
-               istream = new BufferedInputStream(new FileInputStream(cmd.getOptionValue('i')));
-           }
+
+            if (cmd.hasOption("if")) {
+                inputFormat = cmd.getOptionValue("if");
+            }
+
+            if (cmd.hasOption("of")) {
+                outputFormat = cmd.getOptionValue("of");
+            }
+
+            if (cmd.getOptionValue('i').equals("-")) {
+                istream = new BufferedInputStream(System.in);
+            } else {
+                istream = new BufferedInputStream(new FileInputStream(cmd.getOptionValue('i')));
+            }
 
             RAMGraph ramGraph;
-            if (cmd.hasOption("ti")){
+            if (inputFormat.equals("texttour")) {
+
                 ramGraph = new GraphReaderTXT().createRAMGraph(istream);
-            } else {
+            } else if (inputFormat.equals("textfunk")) {
                 ramGraph = new GraphReaderBinaryFunke().createRAMGraph(istream);
+            } else if (inputFormat.equals("binfunk")) {
+                ramGraph = new GraphReaderBinaryFunke().createRAMGraph(istream);
+            } else {
+                System.err.println("Unknown input format " + inputFormat);
+                return;
             }
 
             ramGraph.sanityCheck();
 
 
-            RAMGraph prunedGraph=ramGraph.pruneGraph();
+            RAMGraph prunedGraph = ramGraph.pruneGraph();
             preCHBenchTest(ramGraph, prunedGraph);
-            ramGraph=null;
+            ramGraph = null;
 
-            CHConstructor myCH=new CHConstructor(prunedGraph);
-            long overallTime=System.currentTimeMillis();
+            CHConstructor myCH = new CHConstructor(prunedGraph);
+            long overallTime = System.currentTimeMillis();
             long curTime, timeDelta;
 
             System.out.println("Starting Contraction!");
-            for(int k=0;; k++)
-            {
-                System.out.println("*************************************** "+(System.currentTimeMillis()-overallTime));
-                curTime=System.currentTimeMillis();
-                int n=myCH.contractLevel(k);
-                timeDelta=System.currentTimeMillis()-curTime;
-                System.out.println("Level "+k+" contraction was "+timeDelta+" having "+n+" nodes");
-                if (n<=1)
+            for (int k = 0; ; k++) {
+                System.out.println("*************************************** " + (System.currentTimeMillis() - overallTime));
+                curTime = System.currentTimeMillis();
+                int n = myCH.contractLevel(k);
+                timeDelta = System.currentTimeMillis() - curTime;
+                System.out.println("Level " + k + " contraction was " + timeDelta + " having " + n + " nodes");
+                if (n <= 1)
                     break;
             }
 
 
-
             // now turn myCHgraph into usable graph structure (!)
             // RAMGraph graphCH=myCH.myCHGraph.compressGraph();
-            RAMGraph graphCH=myCH.myCHGraph.rearrangeGraph();
+            RAMGraph graphCH = myCH.myCHGraph.rearrangeGraph();
 
             System.out.println("==============================================");
-            System.out.println("Total contraction time: "+(System.currentTimeMillis()-overallTime));
+            System.out.println("Total contraction time: " + (System.currentTimeMillis() - overallTime));
 
 
             graphCH.sanityCheck();
 
             graphCH.setCHShortCuts();
             BufferedOutputStream ostream;
-            if (!cmd.hasOption('o')){
+            if (!cmd.hasOption('o')) {
                 ostream = new BufferedOutputStream(new FileOutputStream("graph_out.gbin"));
             } else {
-                if(cmd.getOptionValue('o').equals("-")){
+                if (cmd.getOptionValue('o').equals("-")) {
                     ostream = new BufferedOutputStream(System.out);
                 } else {
                     ostream = new BufferedOutputStream(new FileOutputStream(cmd.getOptionValue('o')));
                 }
             }
-            if (cmd.hasOption("to")){
+
+            if (outputFormat.equals("texttour")) {
                 new GraphWriterTXTTourenplaner().writeRAMGraph(ostream, graphCH);
+            } else if (outputFormat.equals("textfunk")) {
+                new GraphWriterTXTFunke().writeRAMGraph(ostream, graphCH);
+            } else if (outputFormat.equals("bintour")) {
+                new GraphWriterBinaryTourenplaner().writeRAMGraph(ostream, graphCH);
+            } else if (outputFormat.equals("binfunk")) {
+                new GraphWriterBinaryFunke().writeRAMGraph(ostream, graphCH);
             } else {
-                new GraphWriterBinaryFunke().writeRAMGraph(ostream,graphCH);
+                System.err.println("Unknown output format " + outputFormat);
+                return;
             }
 
             withChBench(prunedGraph, graphCH);
 
-        } catch (FileNotFoundException fnf){
-            System.err.println("Could not open the input file "+fnf.getMessage());
-        } catch (IOException ex){
-            System.err.println("There was an IOException "+ex.getMessage());
-        } catch (ParseException ps){
-            System.err.println("Unexpected parse exception when reading command line "+ps.getMessage());
+        } catch (FileNotFoundException fnf) {
+            System.err.println("Could not open the input file " + fnf.getMessage());
+        } catch (IOException ex) {
+            System.err.println("There was an IOException " + ex.getMessage());
+        } catch (ParseException ps) {
+            System.err.println("Unexpected parse exception when reading command line " + ps.getMessage());
         }
     }
-
 
 
 }
