@@ -134,10 +134,11 @@ public class Main {
 
             RAMGraph ramGraph;
             if (inputFormat.equals("texttour")) {
-
                 ramGraph = new GraphReaderTXT().createRAMGraph(istream);
             } else if (inputFormat.equals("textfunk")) {
-                ramGraph = new GraphReaderBinaryFunke().createRAMGraph(istream);
+                ramGraph = new GraphReaderTXT().createRAMGraph(istream);
+            } else if (inputFormat.equals("text")) {
+                ramGraph = new GraphReaderTXT().createRAMGraph(istream);
             } else if (inputFormat.equals("binfunk")) {
                 ramGraph = new GraphReaderBinaryFunke().createRAMGraph(istream);
             } else {
