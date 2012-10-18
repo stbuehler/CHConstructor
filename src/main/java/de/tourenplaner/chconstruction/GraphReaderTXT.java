@@ -135,7 +135,7 @@ public class GraphReaderTXT implements GraphReader {
                 graph.addNode(x, y, altID, height, OSMID);
 
                 if ((i % (nofNodes / 10)) == 0) {
-                    System.out.print((10 * i / (nofNodes / 10) + "% "));
+                    System.err.print((10 * i / (nofNodes / 10) + "% "));
                 }
             } else {
                 graph.nofNodes--;
@@ -153,7 +153,7 @@ public class GraphReaderTXT implements GraphReader {
                 graph.addEdge(edgeSource, edgeTarget, edgeWeight, edgeLength);
 
                 if ((i % (nofEdges / 10)) == 0) {
-                    System.out.print((10 * i / (nofEdges / 10) + "% "));
+                    System.err.print((10 * i / (nofEdges / 10) + "% "));
                 }
             } else {
                 graph.nofEdges--;
@@ -164,10 +164,10 @@ public class GraphReaderTXT implements GraphReader {
             graph = new RAMGraph(graph);
         }
 
-        System.out.println("Parsing took " + (System.currentTimeMillis() - curTime));
+        System.err.println("Parsing took " + (System.currentTimeMillis() - curTime));
         graph.setupOffsets();
 
-        System.out.println("Read graph with " + nofNodes +
+        System.err.println("Read graph with " + nofNodes +
                 " vertices and " + nofEdges + " edges in time " + (System.currentTimeMillis() - curTime) + "ms");
         return graph;
     }

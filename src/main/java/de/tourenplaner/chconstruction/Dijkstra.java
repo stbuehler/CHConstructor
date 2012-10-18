@@ -95,7 +95,7 @@ public class Dijkstra {
                 }
             }
         }
-        // System.out.println("Dijkstra has touched "+nofTouchedNodes);
+        // System.err.println("Dijkstra has touched "+nofTouchedNodes);
         return dist[trg];
 
     }
@@ -105,10 +105,10 @@ public class Dijkstra {
             return;
         int cur_node = trg;
         do {
-            System.out.print(cur_node + "(" + myGraph.level(cur_node) + ")-");
+            System.err.print(cur_node + "(" + myGraph.level(cur_node) + ")-");
             cur_node = pred[cur_node];
         } while (cur_node != lastSource);
-        System.out.println(cur_node + "(" + myGraph.level(cur_node) + ")");
+        System.err.println(cur_node + "(" + myGraph.level(cur_node) + ")");
 
     }
 
@@ -116,13 +116,13 @@ public class Dijkstra {
         if (!settled[trg])
             return;
         int cur_node = trg;
-        System.out.println("***********************************************");
+        System.err.println("***********************************************");
         do {
-            System.out.println(myGraph.yCoord(cur_node) + "," + myGraph.xCoord(cur_node));
+            System.err.println(myGraph.yCoord(cur_node) + "," + myGraph.xCoord(cur_node));
             cur_node = pred[cur_node];
         } while (cur_node != lastSource);
-        System.out.println(myGraph.yCoord(cur_node) + "," + myGraph.xCoord(cur_node));
-        System.out.println("***********************************************");
+        System.err.println(myGraph.yCoord(cur_node) + "," + myGraph.xCoord(cur_node));
+        System.err.println("***********************************************");
     }
 
 }

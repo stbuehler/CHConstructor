@@ -65,6 +65,6 @@ public class GraphWriterBinaryFunke implements GraphWriter {
         }
         out.flush();
 
-        System.out.println("Wrote BIN file in time " + (System.currentTimeMillis() - curTime));
+        System.err.println("Wrote BIN file in time " + (System.currentTimeMillis() - curTime));
     }
 }

@@ -80,7 +80,7 @@ public class BDDijkstra {
         // otherwise we have to process pq until settling trg
         boolean phaseFinished = false;
         while ((!myQueue.isEmpty()) && !phaseFinished) {
-            //System.out.print(".");
+            //System.err.print(".");
             BDPQElement cur = myQueue.remove();
             int cur_dist = cur.key;
             int cur_node = cur.value;
@@ -124,11 +124,11 @@ public class BDDijkstra {
                     }
                 }
             }
-            //System.out.println(myQueue.size());
+            //System.err.println(myQueue.size());
         }
         // now we iterate over all
 
-        //System.out.println("BD has touched "+nofTouchedNodes);
+        //System.err.println("BD has touched "+nofTouchedNodes);
         /*
           bestDist=Integer.MAX_VALUE;
           for(int i=0; i<nofTouchedNodes; i++)

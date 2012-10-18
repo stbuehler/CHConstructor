@@ -117,14 +117,14 @@ public class CHConstructor {
                 }
             }
         }
-        System.out.println("We have an IS of size " + nofCandidates);
+        System.err.println("We have an IS of size " + nofCandidates);
         //PQElement curEl=degreePQ.peek();
         int boundSC = degSum / nofCandidates + 1;
         // we know that we can find a node which produces at most boundSC shortcuts !!!
         if (boundSC < 6)
             boundSC = 6;
 
-        System.out.println("boundSC=" + boundSC);
+        System.err.println("boundSC=" + boundSC);
 
 
         int allSCUB = tempGraph.nofEdges();
@@ -159,7 +159,7 @@ public class CHConstructor {
         do {
             contractionPQ = new PriorityQueue<PQElement>();
             boundSC = boundSC * 2;
-            System.out.print("\n Current boundSC: " + boundSC + "  ");
+            System.err.print("\n Current boundSC: " + boundSC + "  ");
             validED = 0;
             sumED = 0;
             tentNofSC = 0;
@@ -190,8 +190,8 @@ public class CHConstructor {
                 candSCoffset[i + 1] = tentNofSC;
 
                 if ((i % (nofCandidates / 10 + 1)) == 0) {
-                    System.out.print((10 * i / (nofCandidates / 10 + 1) + "% "));
-                    System.out.print("(" + nofSC + "/" + edgeDiff + ") ");
+                    System.err.print((10 * i / (nofCandidates / 10 + 1) + "% "));
+                    System.err.print("(" + nofSC + "/" + edgeDiff + ") ");
 
                 }
             }
@@ -209,7 +209,7 @@ public class CHConstructor {
         int[] lgthSCfinal = new int[allSCUB];
 
         int avgED = sumED / validED + 1;
-        System.out.println("\n AvgED=" + avgED + " validED=" + validED);
+        System.err.println("\n AvgED=" + avgED + " validED=" + validED);
 
 
         while (!contractionPQ.isEmpty()) {
@@ -236,7 +236,7 @@ public class CHConstructor {
         }
 
 
-        System.out.println("\n Will contract " + realContract + " nodes and creating " + totalNofSC + " SCs");
+        System.err.println("\n Will contract " + realContract + " nodes and creating " + totalNofSC + " SCs");
 
         // count surviving nodes and edges
         int nofDeletedEdges = 0;
@@ -251,7 +251,7 @@ public class CHConstructor {
             else
                 nofDeletedEdges++;
         assert ((newNofEdges + nofDeletedEdges) == tempGraph.nofEdges() + totalNofSC);
-        System.out.println("\n New Graph has " + newNofNodes + " nodes and " + newNofEdges + " edges having deleted " + nofDeletedEdges);
+        System.err.println("\n New Graph has " + newNofNodes + " nodes and " + newNofEdges + " edges having deleted " + nofDeletedEdges);
 
         // * assign all contracted nodes the new level in myCHgraph
         // * add all created shortcuts to myCHgraph

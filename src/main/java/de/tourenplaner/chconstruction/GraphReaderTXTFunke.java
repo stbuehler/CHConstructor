@@ -53,7 +53,7 @@ public class GraphReaderTXTFunke implements GraphReader {
             graph.addNode(x, y, altID, -1, -1);
 
             if ((i % (nofNodes / 10)) == 0) {
-                System.out.print((10 * i / (nofNodes / 10) + "% "));
+                System.err.print((10 * i / (nofNodes / 10) + "% "));
             }
         }
 
@@ -66,14 +66,14 @@ public class GraphReaderTXTFunke implements GraphReader {
             graph.addEdge(edgeSource, edgeTarget, edgeWeight, -1);
 
             if ((i % (nofEdges / 10)) == 0) {
-                System.out.print((10 * i / (nofEdges / 10) + "% "));
+                System.err.print((10 * i / (nofEdges / 10) + "% "));
             }
         }
 
-        System.out.println("Parsing took " + (System.currentTimeMillis() - curTime));
+        System.err.println("Parsing took " + (System.currentTimeMillis() - curTime));
         graph.setupOffsets();
 
-        System.out.println("Read graph with " + nofNodes +
+        System.err.println("Read graph with " + nofNodes +
                 " vertices and " + nofEdges + " edges in time " + (System.currentTimeMillis() - curTime) + "ms");
         return graph;
     }

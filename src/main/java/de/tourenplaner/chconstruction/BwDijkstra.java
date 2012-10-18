@@ -53,7 +53,7 @@ public class BwDijkstra extends Dijkstra {
                 }
             }
         }
-        // System.out.println("Dijkstra has touched "+nofTouchedNodes);
+        // System.err.println("Dijkstra has touched "+nofTouchedNodes);
         return dist[trg];
 
     }

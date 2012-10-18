@@ -35,7 +35,7 @@ public class CHDijkstra extends BDDijkstra {
         // otherwise we have to process pq until settling trg
         boolean phaseFinished = false;
         while ((!myQueue.isEmpty()) && !phaseFinished) {
-            //System.out.print(".");
+            //System.err.print(".");
             BDPQElement cur = myQueue.remove();
             int cur_dist = cur.key;
             int cur_node = cur.value;
@@ -123,7 +123,7 @@ public class CHDijkstra extends BDDijkstra {
                 }
             }
         }
-        System.out.println("CH-BD has touched " + nofTouchedNodes + " and looked at " + edgeCount + " edges");
+        System.err.println("CH-BD has touched " + nofTouchedNodes + " and looked at " + edgeCount + " edges");
 
         if (1 == 0) {
             // ONLY FOR DEBUGGING
@@ -135,7 +135,7 @@ public class CHDijkstra extends BDDijkstra {
 
             for (int i = 0; i < nofTouchedNodes; i++) {
                 //if ((i%100)==0)
-                //	System.out.println(i+" ");
+                //	System.err.println(i+" ");
                 int curNode = touchedNodes[i];
                 boolean fwdUse = false, bwdUse = false;
 
@@ -146,7 +146,7 @@ public class CHDijkstra extends BDDijkstra {
                     assert (myTmpDijkstraF.dist[curNode] != Integer.MAX_VALUE);
                     if (myTmpDijkstraF.dist[curNode] == fwdDist) {
                         if (myGraph.level(curNode) > 80)
-                            System.out.print(curNode + "(" + myGraph.level(curNode) + ") ");
+                            System.err.print(curNode + "(" + myGraph.level(curNode) + ") ");
                         fwdOK++;
                         fwdUse = true;
                     }
@@ -168,9 +168,9 @@ public class CHDijkstra extends BDDijkstra {
                 if (bwdUse || fwdUse)
                     bothOK++;
             }
-            System.out.println("\n Forward search: " + fwdOK + "/" + fwdTotal);
-            System.out.println("Backward search: " + bwdOK + "/" + bwdTotal);
-            System.out.println("Best Distance:" + bestTmpDist + " and total nodes: " + bothOK);
+            System.err.println("\n Forward search: " + fwdOK + "/" + fwdTotal);
+            System.err.println("Backward search: " + bwdOK + "/" + bwdTotal);
+            System.err.println("Best Distance:" + bestTmpDist + " and total nodes: " + bothOK);
         }
         return bestDist;
 
@@ -193,6 +193,6 @@ public class CHDijkstra extends BDDijkstra {
                 assert (myGraph.level(src_node) <= myGraph.level(next_src_node));
             }
         }
-        System.out.println("CH Reqs ok!");
+        System.err.println("CH Reqs ok!");
     }
 }

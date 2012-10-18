@@ -29,7 +29,7 @@ public class GraphWriterTXTTourenplaner implements GraphWriter {
         data_out.write(ramGraph.nofNodes() + "\n");
         data_out.write(ramGraph.nofEdges() + "\n");
         // write-out coordinates and levels
-        System.out.print("\n Nodes:");
+        System.err.print("\n Nodes:");
         for (int i = 0; i < ramGraph.nofNodes(); i++) {
             data_out.write((int) (ramGraph.xCoord[i] * 10000000.0) + " ");
             data_out.write((int) (ramGraph.yCoord[i] * 10000000.0) + " ");
@@ -37,10 +37,10 @@ public class GraphWriterTXTTourenplaner implements GraphWriter {
             data_out.write(ramGraph.level[i] + "\n");
 
             if ((i % (ramGraph.nofNodes / 10)) == 0) {
-                System.out.print((10 * i / (ramGraph.nofNodes / 10) + "% "));
+                System.err.print((10 * i / (ramGraph.nofNodes / 10) + "% "));
             }
         }
-        System.out.print("\n Edges: ");
+        System.err.print("\n Edges: ");
         // write-out edges
         for (int j = 0; j < ramGraph.nofEdges; j++) {
             data_out.write(ramGraph.edgeSource[j] + " ");
@@ -51,10 +51,10 @@ public class GraphWriterTXTTourenplaner implements GraphWriter {
             data_out.write(ramGraph.edgeSkippedB[j] + "\n");
 
             if ((j % (ramGraph.nofEdges / 10)) == 0) {
-                System.out.print((10 * j / (ramGraph.nofEdges / 10) + "% "));
+                System.err.print((10 * j / (ramGraph.nofEdges / 10) + "% "));
             }
         }
         data_out.close();
-        System.out.println("Writing GTXT took " + (System.currentTimeMillis() - curTime) + "ms");
+        System.err.println("Writing GTXT took " + (System.currentTimeMillis() - curTime) + "ms");
     }
 }

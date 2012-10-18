@@ -28,13 +28,13 @@ public class Main {
             long curTime = System.currentTimeMillis();
             int dist = myDijkstra.runDijkstra(src, trg);
             long timeDelta = System.currentTimeMillis() - curTime;
-            System.out.println("Distance from " + src + " to " + trg + " is " + dist + " in time " + timeDelta);
+            System.err.println("Distance from " + src + " to " + trg + " is " + dist + " in time " + timeDelta);
 
             curTime = System.currentTimeMillis();
             int dist2 = myBDDijkstra.runDijkstra(src, trg);
             timeDelta = System.currentTimeMillis() - curTime;
-            System.out.println("BDDistance from " + src + " to " + trg + " is " + dist2 + " in time " + timeDelta);
-            System.out.println();
+            System.err.println("BDDistance from " + src + " to " + trg + " is " + dist2 + " in time " + timeDelta);
+            System.err.println();
 
             // myDijkstra.printGeoPath(trg);
             assert (dist == dist2);
@@ -69,13 +69,13 @@ public class Main {
             long timeDelta2 = (System.nanoTime() - curTime) / 1000;
 
             minDist = dist;
-            System.out.println("Distance from " + graphCH.altNodeID(src) + " to " + graphCH.altNodeID(trg) + " is " + dist + " in time " + timeDelta);
-            System.out.println("CH-Distance in CH from " + src + " to " + trg + " is " + dist2 + " in time " + timeDelta2);
-            System.out.println("Levels are " + graphCH.level(src) + "/" + graphCH.level(trg));
+            System.err.println("Distance from " + graphCH.altNodeID(src) + " to " + graphCH.altNodeID(trg) + " is " + dist + " in time " + timeDelta);
+            System.err.println("CH-Distance in CH from " + src + " to " + trg + " is " + dist2 + " in time " + timeDelta2);
+            System.err.println("Levels are " + graphCH.level(src) + "/" + graphCH.level(trg));
             if (dist == Integer.MAX_VALUE)
-                System.out.println("*******************************************************");
+                System.err.println("*******************************************************");
             // myDijkstra.printPath(trg);
-            System.out.println();
+            System.err.println();
             assert (dist == dist2);
 
 
@@ -157,13 +157,13 @@ public class Main {
             long overallTime = System.currentTimeMillis();
             long curTime, timeDelta;
 
-            System.out.println("Starting Contraction!");
+            System.err.println("Starting Contraction!");
             for (int k = 0; ; k++) {
-                System.out.println("*************************************** " + (System.currentTimeMillis() - overallTime));
+                System.err.println("*************************************** " + (System.currentTimeMillis() - overallTime));
                 curTime = System.currentTimeMillis();
                 int n = myCH.contractLevel(k);
                 timeDelta = System.currentTimeMillis() - curTime;
-                System.out.println("Level " + k + " contraction was " + timeDelta + " having " + n + " nodes");
+                System.err.println("Level " + k + " contraction was " + timeDelta + " having " + n + " nodes");
                 if (n <= 1)
                     break;
             }
@@ -173,8 +173,8 @@ public class Main {
             // RAMGraph graphCH=myCH.myCHGraph.compressGraph();
             RAMGraph graphCH = myCH.myCHGraph.rearrangeGraph();
 
-            System.out.println("==============================================");
-            System.out.println("Total contraction time: " + (System.currentTimeMillis() - overallTime));
+            System.err.println("==============================================");
+            System.err.println("Total contraction time: " + (System.currentTimeMillis() - overallTime));
 
 
             graphCH.sanityCheck();
@@ -185,7 +185,7 @@ public class Main {
                 ostream = new BufferedOutputStream(new FileOutputStream("graph_out.gbin"));
             } else {
                 if (cmd.getOptionValue('o').equals("-")) {
-                    ostream = new BufferedOutputStream(System.out);
+                    ostream = new BufferedOutputStream(System.err);
                 } else {
                     ostream = new BufferedOutputStream(new FileOutputStream(cmd.getOptionValue('o')));
                 }

@@ -35,7 +35,7 @@ public class GraphReaderBinaryFunke implements GraphReader {
 
         RAMGraph graph = new RAMGraph(nofNodes, nofEdges);
 
-        System.out.println("Reading " + nofNodes + " vertices and " + nofEdges +
+        System.err.println("Reading " + nofNodes + " vertices and " + nofEdges +
                 " edges");
 
         // read node data
@@ -75,7 +75,7 @@ public class GraphReaderBinaryFunke implements GraphReader {
             graph.edgeSkippedA[i] = data_in.readInt();
             graph.edgeSkippedB[i] = data_in.readInt();
         }
-        System.out.println("Read BIN file in time " + (System.currentTimeMillis() - curTime));
+        System.err.println("Read BIN file in time " + (System.currentTimeMillis() - curTime));
 
 
         return null;

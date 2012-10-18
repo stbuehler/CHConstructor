@@ -126,7 +126,7 @@ public class RAMGraph extends SGraph {
 
     void setupOffsets()    // computes edgeOffsets for given vertices and edges
     {
-        System.out.println("SetupOffsets for " + nofNodes + "/" + nofEdges + " and added " + nodesAdded + "/" + edgesAdded);
+        System.err.println("SetupOffsets for " + nofNodes + "/" + nofEdges + " and added " + nodesAdded + "/" + edgesAdded);
         int[] outCount = new int[nofNodes];
         int[] inCount = new int[nofNodes];
 
@@ -210,7 +210,7 @@ public class RAMGraph extends SGraph {
         }
         swapEdges(storage, end);    // now have pivot at storage
         //if (end-start>1024)
-        //	System.out.println(start+"--"+end+" with pivot "+storage+" and "+pivot);
+        //	System.err.println(start+"--"+end+" with pivot "+storage+" and "+pivot);
         quickSortEdgeArray(start, storage - 1);
         quickSortEdgeArray(storage + 1, end);
     }
@@ -256,7 +256,7 @@ public class RAMGraph extends SGraph {
             }
         }
         resultGraph.setupOffsets();
-        System.out.println("pruneGraph: " + nofEdges() + "/" + newNofEdges + " with " + selfLoops + " selfLoops");
+        System.err.println("pruneGraph: " + nofEdges() + "/" + newNofEdges + " with " + selfLoops + " selfLoops");
         return resultGraph;
     }
 
@@ -265,7 +265,7 @@ public class RAMGraph extends SGraph {
         // does not rearrange within the nodes of one level
         RAMGraph resultGraph = new RAMGraph(nodesAdded, edgesAdded);
 
-        System.out.println("We have a graph with " + nodesAdded + " nodes and " + edgesAdded + " edges");
+        System.err.println("We have a graph with " + nodesAdded + " nodes and " + edgesAdded + " edges");
         int[] old2new = new int[nodesAdded];
         int maxLevel = 0;
         for (int i = 0; i < nodesAdded; i++) {
@@ -279,10 +279,10 @@ public class RAMGraph extends SGraph {
                 countIMAX++;
             }
         }
-        System.out.println("We had " + countIMAX + " high levels");
+        System.err.println("We had " + countIMAX + " high levels");
         maxLevel++;
 
-        System.out.println("We have maxlevel=" + maxLevel);
+        System.err.println("We have maxlevel=" + maxLevel);
         int[] levelCount = new int[maxLevel + 2];
         int[] levelOffset = new int[maxLevel + 2];
 
@@ -313,13 +313,13 @@ public class RAMGraph extends SGraph {
             resultGraph.addEdge(old2new[curSrc], old2new[curTrg], curWeight, curLength, curA, curB);
 
         }
-        System.out.println("Before sorting");
+        System.err.println("Before sorting");
         resultGraph.quickSortEdgeArray(0, edgesAdded - 1);
-        System.out.println("After sorting");
+        System.err.println("After sorting");
 
         resultGraph.setupOffsets();
 
-        System.out.println("Graph rearrangement complete!");
+        System.err.println("Graph rearrangement complete!");
         return resultGraph;
     }
 
@@ -338,7 +338,7 @@ public class RAMGraph extends SGraph {
                     maxWeight = edgeWeight(curEdge);
             }
         }
-        System.out.println(nofNodes + "/" + nofEdges + ": Sum of inEdges=" + inSum + " with degree sum=" + inDegSum);
+        System.err.println(nofNodes + "/" + nofEdges + ": Sum of inEdges=" + inSum + " with degree sum=" + inDegSum);
 
         long outSum = 0, outDegSum = 0;
         for (int i = 0; i < nofNodes(); i++) {
@@ -352,9 +352,9 @@ public class RAMGraph extends SGraph {
                     maxWeight = edgeWeight(curEdge);
             }
         }
-        System.out.println(nofNodes + "/" + nofEdges + ": Sum of outEdges=" + outSum + " with degree sum=" + outDegSum);
+        System.err.println(nofNodes + "/" + nofEdges + ": Sum of outEdges=" + outSum + " with degree sum=" + outDegSum);
 
-        System.out.println("MaxWeight: " + maxWeight + " and MinWeight: " + minWeight + " AvgWeight:"
+        System.err.println("MaxWeight: " + maxWeight + " and MinWeight: " + minWeight + " AvgWeight:"
                 + (inSum + outSum) / nofEdges());
 
         // statistics about levels
@@ -371,14 +371,14 @@ public class RAMGraph extends SGraph {
         int levelSum = 0;
         for (int i = maxLevel; i >= 0; i--) {
             levelSum += levelCount[i];
-            System.out.println(i + ": " + levelSum);
+            System.err.println(i + ": " + levelSum);
         }
     }
 
 
     void setCHShortCuts() {
         //only makes real sense for CH computations
-        System.out.println("Setting CH shortcuts");
+        System.err.println("Setting CH shortcuts");
         int count_shortcuts = 0;
         for (int j = 0; j < nofEdges(); j++) {
             int edgeSrc = edgeSource(j);
@@ -405,7 +405,7 @@ public class RAMGraph extends SGraph {
                 }
             }
         }
-        System.out.println("We have found " + count_shortcuts + " shortcuts");
+        System.err.println("We have found " + count_shortcuts + " shortcuts");
     }
 
 
