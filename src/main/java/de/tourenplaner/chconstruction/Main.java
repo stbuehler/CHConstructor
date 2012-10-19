@@ -98,6 +98,8 @@ public class Main {
         options.addOption("of", "output-format", true, "Choose from binfunk, bintour, textfunk, texttour");
         options.addOption("i", "input-file", true, "The graph file to read from, use - for standard input");
         options.addOption("o", "output-file", true, "The graph file to write the result to, use - for standard output");
+        options.addOption("co", "coure-file", true, "The filename for the core file");
+        options.addOption("ml", "max-level", true, "The maximum level for the core graph (default 40)");
         options.addOption("h", "help", false, "Show this help message");
 
         BufferedInputStream istream;
@@ -202,6 +204,14 @@ public class Main {
             } else {
                 System.err.println("Unknown output format " + outputFormat);
                 return;
+            }
+
+
+            if (cmd.hasOption("co")){
+                int maxLevel = 40;
+                if (cmd.hasOption("ml"))
+                    maxLevel = Integer.parseInt(cmd.getOptionValue("ml"));
+                new CoreExporter().exportCore(graphCH, new FileOutputStream(cmd.getOptionValue("co")), maxLevel);
             }
 
             withChBench(prunedGraph, graphCH);
