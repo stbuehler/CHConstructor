@@ -180,7 +180,7 @@ public class Main {
 
 
             graphCH.sanityCheck();
-
+            graphCH.printLevelStats();
             graphCH.setCHShortCuts();
             BufferedOutputStream ostream;
             if (!cmd.hasOption('o')) {

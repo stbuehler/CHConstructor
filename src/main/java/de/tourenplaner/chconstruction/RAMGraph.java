@@ -46,6 +46,9 @@ public class RAMGraph extends SGraph {
     int edgesAdded;
     int nodesAdded;
 
+    // usefull data about graph
+    int maxLevel;
+
     // random generator
     Random generator = new Random();
 
@@ -54,12 +57,14 @@ public class RAMGraph extends SGraph {
         this.nofNodes = nofNodes;
         this.nofEdges = nofEdges;
         nodesAdded = edgesAdded = 0;
+        maxLevel = -1;
         setupMemory();
     }
 
     RAMGraph(RAMGraph _original) {
         nofNodes = _original.nofNodes;
         nofEdges = _original.nofEdges;
+        maxLevel = _original.maxLevel;
         setupMemory();
         for (int i = 0; i < nofNodes; i++) {
             xCoord[i] = _original.xCoord[i];
@@ -260,6 +265,14 @@ public class RAMGraph extends SGraph {
         return resultGraph;
     }
 
+    private void ensureMaxLevel(){
+        if (maxLevel == -1) {
+            for (int i = 0; i < nodesAdded; i++) {
+                if ((maxLevel < level[i]) && (level[i] != Integer.MAX_VALUE)) maxLevel = level[i];
+            }
+        }
+    }
+
     RAMGraph rearrangeGraph() {
         // rearrange graph according to levels of the nodes (small levels first)
         // does not rearrange within the nodes of one level
@@ -267,11 +280,7 @@ public class RAMGraph extends SGraph {
 
         System.err.println("We have a graph with " + nodesAdded + " nodes and " + edgesAdded + " edges");
         int[] old2new = new int[nodesAdded];
-        int maxLevel = 0;
-        for (int i = 0; i < nodesAdded; i++) {
-            if ((maxLevel < level[i]) && (level[i] != Integer.MAX_VALUE))
-                maxLevel = level[i];
-        }
+        ensureMaxLevel();
         int countIMAX = 0;
         for (int i = 0; i < nodesAdded; i++) {
             if (level[i] == Integer.MAX_VALUE) {
@@ -356,23 +365,40 @@ public class RAMGraph extends SGraph {
 
         System.err.println("MaxWeight: " + maxWeight + " and MinWeight: " + minWeight + " AvgWeight:"
                 + (inSum + outSum) / nofEdges());
+    }
 
-        // statistics about levels
+    void printLevelStats(){
+        ensureMaxLevel();
 
-        int[] levelCount = new int[9999];
-        int maxLevel = 0;
-        for (int i = 0; i < 9999; i++)
-            levelCount[i] = 0;
+        int[] levelNodeHist = new int[maxLevel+1];
+
         for (int i = 0; i < nofNodes(); i++) {
-            levelCount[level(i)]++;
-            if (level(i) > maxLevel)
-                maxLevel = level(i);
+            levelNodeHist[level(i)]++;
         }
-        int levelSum = 0;
-        for (int i = maxLevel; i >= 0; i--) {
-            levelSum += levelCount[i];
-            System.err.println(i + ": " + levelSum);
+        int sumHigher = nofNodes();
+        System.err.println("Level Stats Full:");
+        System.err.println("Level, # nodes, # higher nodes (including), percent of total");
+        for (int i = 0; i <= maxLevel; i++){
+            System.err.println(i + ", " + levelNodeHist[i] + ", "+ sumHigher+", "+((double)levelNodeHist[i])/((double)nofNodes())*100.0);
+            sumHigher -= levelNodeHist[i];
         }
+
+        int low = 0;
+        sumHigher = nofNodes();
+        int high, sumNodes;
+        System.err.println("Level Stats Summary:");
+        System.err.println("Levels, # nodes, # higher nodes (including), percent of total");
+        while (low <= maxLevel) {
+            sumNodes = 0;
+            high = Math.min(low + 10, maxLevel + 1);
+            for (int i = low; i < high; i++){
+               sumNodes += levelNodeHist[i];
+            }
+            System.err.println("["+low + "-" + high + "), " + sumNodes + ", " + sumHigher + ", " + ((double) sumNodes) / ((double) nofNodes()) * 100.0);
+            sumHigher -= sumNodes;
+            low = high;
+        }
+
     }
 
 
