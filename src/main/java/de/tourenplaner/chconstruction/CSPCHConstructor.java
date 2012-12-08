@@ -41,7 +41,7 @@ public class CSPCHConstructor extends Constructor{
 
     CSPCHConstructor(RAMGraph _myGraph) {
         myGraph = _myGraph;
-        myCHGraph = new RAMGraph(myGraph.nofNodes(), 10 * myGraph.nofEdges());  /// KONSTANTE GRUSEL!!!!!!!
+        myCHGraph = new RAMGraph(myGraph.nofNodes(), 3 * myGraph.nofEdges());  /// KONSTANTE GRUSEL!!!!!!!
         tempGraph = new RAMGraph(myGraph.nofNodes(), myGraph.nofEdges());
         for (int i = 0; i < myGraph.nofNodes(); i++)    // first add the original graph
         {
@@ -241,9 +241,10 @@ public class CSPCHConstructor extends Constructor{
             int[] lgthSC = new int[boundSC];
             int[] altDiffSC = new int[boundSC];
 
-
+            int nofsubmited = 0;
             for (int i = 0; i < candBound; i++) {
                 int nofSC = contractNode(candidates[i], myDijkstra, srcSC, trgSC, wgtSC, lgthSC, altDiffSC, boundSC);
+                nofsubmited++;
                 int edgeDiff = nofSC - tempGraph.nofInEdges(candidates[i]) - tempGraph.nofOutEdges(candidates[i]);
                 if (nofSC < boundSC) {
                     sumED += edgeDiff;
@@ -321,6 +322,8 @@ public class CSPCHConstructor extends Constructor{
         for (int i = 0; i < tempGraph.nofNodes(); i++)
             if (!contracted[i])
                 newNofNodes++;
+
+
         assert (realContract == tempGraph.nofNodes() - newNofNodes);
         for (int j = 0; j < tempGraph.nofEdges(); j++)
             if ((!contracted[tempGraph.edgeSource(j)]) && (!contracted[tempGraph.edgeTarget[j]]))

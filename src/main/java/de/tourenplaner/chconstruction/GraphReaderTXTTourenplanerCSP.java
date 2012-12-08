@@ -1,21 +1,3 @@
-/*
- * (C) Copyright 2012 Peter Vollmer
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; version 2
- * of the License.
- */
-
-/*
- * (C) Copyright 2012 Peter Vollmer
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; version 2
- * of the License.
- */
-
 package de.tourenplaner.chconstruction;
 
 import java.io.BufferedReader;
@@ -26,13 +8,12 @@ import java.util.regex.Pattern;
 
 /**
  * User: Peter Vollmer
- * Date: 10/8/12
- * Time: 12:43 PM
+ * Date: 12/3/12
+ * Time: 10:45 AM
  */
-public class GraphReaderTXTSabine implements GraphReader {
+public class GraphReaderTXTTourenplanerCSP implements GraphReader{
     @Override
     public RAMGraph createRAMGraph(InputStream in) throws IOException {
-
         int nofNodes;
         int nofEdges;
 
@@ -51,35 +32,42 @@ public class GraphReaderTXTSabine implements GraphReader {
 
         RAMGraph graph = new RAMGraph(nofNodes, nofEdges);
         float x, y;
-        int height;
+        int height, level;
         String[] splittedLine;
         int iDCounter = 0;
         for (int i = 0; i < nofNodes; i++) {
             splittedLine = COMPILE.split(inb.readLine());
-            x = Float.parseFloat(splittedLine[0]);
-            y = Float.parseFloat(splittedLine[1]);
+            x = Integer.parseInt(splittedLine[0])/10000000.F;
+            y = Integer.parseInt(splittedLine[1])/10000000.F;
             height = Integer.parseInt(splittedLine[2]);
-            graph.addNode(x, y, iDCounter, height, -1);
+            level = Integer.parseInt(splittedLine[3]);
+            graph.addNode(x, y, iDCounter, height, -1,level);
             iDCounter++;
             if ((i % (nofNodes / 10)) == 0) {
                 System.err.print((10 * i / (nofNodes / 10) + "% "));
             }
         }
 
-        int edgeSource, edgeTarget, edgeWeight, edgeAltDiff;
+        int edgeSource, edgeTarget, edgeWeight, edgeAltDiff,edgeLength,edgeSkippedA, edgeSkippedB;
         for (int i = 0; i < nofEdges; i++) {
             splittedLine = COMPILE.split(inb.readLine());
             edgeSource = Integer.parseInt(splittedLine[0]);
             edgeTarget = Integer.parseInt(splittedLine[1]);
             edgeWeight = Integer.parseInt(splittedLine[2]);
-            edgeAltDiff = graph.height(edgeTarget)-graph.height(edgeSource);
+            edgeLength = Integer.parseInt(splittedLine[3]);
+            edgeAltDiff = Integer.parseInt(splittedLine[4]);
+            edgeSkippedA = Integer.parseInt(splittedLine[5]);
+            edgeSkippedB = Integer.parseInt(splittedLine[6]);
+
+
             if(edgeWeight == 0){
                 edgeWeight = 1;
             }
             if (edgeAltDiff < 0) {
                 edgeAltDiff = 0;
             }
-            graph.addEdge(edgeSource, edgeTarget, edgeWeight, edgeWeight, edgeAltDiff,-1,-1);
+
+            graph.addEdge(edgeSource, edgeTarget, edgeWeight, edgeLength, edgeAltDiff,edgeSkippedA,edgeSkippedB);
 
             if ((i % (nofEdges / 10)) == 0) {
                 System.err.print((10 * i / (nofEdges / 10) + "% "));
@@ -95,4 +83,8 @@ public class GraphReaderTXTSabine implements GraphReader {
     }
 
     private static final Pattern COMPILE = Pattern.compile(" ");
+
+
+
+
 }

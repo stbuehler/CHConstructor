@@ -32,6 +32,7 @@ public class CSPGraphInspector {
 
     void inspectGraph (){
         Random random = new Random();
+        random.setSeed(123456789);
         int src;
         int trg;
         int lambda;
@@ -45,11 +46,10 @@ public class CSPGraphInspector {
         System.out.println("Nummer;Source;Target;Lambda;CSP;CSPCH;CSPBacktrack;CSPCHBacktrack");
         long cspStartTime,cspEndTime,cspBackTrackStartTime,cspBackTrackEndTime;
         long cspCHStartTime,cspCHEndTime,cspCHBackTrackStartTime,cspCHBackTrackEndTime;
-        while (true){
+        while (counter < 10000){
 
             counter++;
             System.err.println("Counter: "+counter);
-
             src = random.nextInt(graph.nofNodes());
             trg = random.nextInt(graph.nofNodes());
             lambda = random.nextInt(maxLambda);

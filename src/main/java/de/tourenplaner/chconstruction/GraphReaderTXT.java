@@ -131,7 +131,6 @@ public class GraphReaderTXT implements GraphReader {
                 x = Float.parseFloat(splittedLine[2]);
                 y = Float.parseFloat(splittedLine[3]);
                 height = Integer.parseInt(splittedLine[4]);
-
                 graph.addNode(x, y, altID, height, OSMID);
 
                 if ((i % (nofNodes / 10)) == 0) {

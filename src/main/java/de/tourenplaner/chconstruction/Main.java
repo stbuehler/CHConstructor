@@ -187,7 +187,19 @@ public class Main {
                 int n = myCH.contractLevel(k);
                 timeDelta = System.currentTimeMillis() - curTime;
                 System.err.println("Level " + k + " contraction was " + timeDelta + " having " + n + " nodes");
-                if (n <= 1)
+                //99,9%
+                //if (n <= 1  || (n<prunedGraph.nofNodes()/1000))
+
+                //99,5%
+                //if (n <= 1  || (n<prunedGraph.nofNodes()/200))
+                //100%
+                //if (n <= 1)
+                //99%
+                //if (n <= 1  || (n<prunedGraph.nofNodes()/100))
+                //99,4 %
+                //if (n <= 1  || (n<prunedGraph.nofNodes()*3/500))
+                //99,8%
+                //if (n <= 1  || (n<prunedGraph.nofNodes()/500))
                     break;
             }
 

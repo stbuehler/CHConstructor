@@ -25,6 +25,7 @@ public class CSPCHDijkstra extends BDDijkstra {
     int[] pred;
     int bestNode;
     int src;
+    int counter = 1;
 
     CSPCHDijkstra(SGraph _myGraph) {
         super(_myGraph);
@@ -63,8 +64,8 @@ public class CSPCHDijkstra extends BDDijkstra {
             int cur_node = cur.value;
             int cur_side = cur.queue;
 
-            //if (cur_dist>bestDist)
-            //	phaseFinished=true;
+            if (cur_dist>bestDist)
+            	phaseFinished=true;
 
             if (cur_side == 0)    // we are in forward search
             {
@@ -73,7 +74,7 @@ public class CSPCHDijkstra extends BDDijkstra {
 
                     boolean stalled = false;
 
-                    // check for stalling (if there is a node tmp_node (ABOVE) and an edge (tmp_node,cur_node)
+                    // check for stalling (if there is a node tmp_node (ABOcur_distcur_distVE) and an edge (tmp_node,cur_node)
                     // which sum to a smaller distance (!)
                     //for(int j=0; j<myGraph.nofInEdges(cur_node); j++)
                     for (int j = myGraph.nofInEdges(cur_node) - 1; j >= 0; j--) {
@@ -157,6 +158,8 @@ public class CSPCHDijkstra extends BDDijkstra {
             }
         }
         System.err.println("CH-BD has touched " + nofTouchedNodes + " and looked at " + edgeCount + " edges");
+        System.out.println(counter + " CH-BD has touched " + nofTouchedNodes + " and looked at " + edgeCount + " edges");
+        counter++;
 
         if (1 == 0) {
             // ONLY FOR DEBUGGING
