@@ -26,6 +26,7 @@ public class CSPCHDijkstra extends BDDijkstra {
     int bestNode;
     int src;
     int counter = 1;
+    int edgeCount;
 
     CSPCHDijkstra(SGraph _myGraph) {
         super(_myGraph);
@@ -54,7 +55,7 @@ public class CSPCHDijkstra extends BDDijkstra {
         int bestDist = Integer.MAX_VALUE;
         bestNode = -1;
 
-        int edgeCount = 0;
+        edgeCount = 0;
         // otherwise we have to process pq until settling trg
         boolean phaseFinished = false;
         while ((!myQueue.isEmpty()) && !phaseFinished) {
@@ -157,8 +158,8 @@ public class CSPCHDijkstra extends BDDijkstra {
                 }
             }
         }
-        System.err.println("CH-BD has touched " + nofTouchedNodes + " and looked at " + edgeCount + " edges");
-        System.out.println(counter + " CH-BD has touched " + nofTouchedNodes + " and looked at " + edgeCount + " edges");
+        //System.err.println("CH-BD has touched " + nofTouchedNodes + " and looked at " + edgeCount + " edges");
+        //System.out.println(counter + " CH-BD has touched " + nofTouchedNodes + " and looked at " + edgeCount + " edges");
         counter++;
 
         if (1 == 0) {

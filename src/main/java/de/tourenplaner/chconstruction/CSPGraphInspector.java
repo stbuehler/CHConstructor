@@ -9,6 +9,9 @@
 
 package de.tourenplaner.chconstruction;
 
+import sun.org.mozilla.javascript.tools.shell.Global;
+
+import javax.print.PrintServiceLookup;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
@@ -20,12 +23,18 @@ import java.util.concurrent.DelayQueue;
  * Time: 1:25 PM
  */
 public class CSPGraphInspector {
-    RAMGraph graph;
+    RAMGraph chGraph;
     CSPDijkstra cspDijkstra;
     CSPCHDijkstra cspCHDijkstra;
 
+    int costCSP;
+    int resourceCSP;
+    int costCSPCH;
+    int resourceCSPCH;
+
+
     CSPGraphInspector (RAMGraph graph){
-        this.graph = graph;
+        this.chGraph = graph;
         cspDijkstra = new CSPDijkstra(graph);
         cspCHDijkstra = new CSPCHDijkstra(graph);
     }
@@ -50,8 +59,8 @@ public class CSPGraphInspector {
 
             counter++;
             System.err.println("Counter: "+counter);
-            src = random.nextInt(graph.nofNodes());
-            trg = random.nextInt(graph.nofNodes());
+            src = random.nextInt(chGraph.nofNodes());
+            trg = random.nextInt(chGraph.nofNodes());
             lambda = random.nextInt(maxLambda);
 
             System.err.println("CSPGraphInspector: src="+src+", trg="+trg+", lambda="+lambda);
@@ -80,7 +89,6 @@ public class CSPGraphInspector {
             cspCHBackTrackStartTime = System.nanoTime();
             cspCHPath = cspCHBacktrack(src,trg);
             cspCHBackTrackEndTime = System.nanoTime();
-
             System.out.println(counter+";"+src+";"+trg+";"+lambda+";"+(cspEndTime-cspStartTime)+";"+(cspCHEndTime-cspCHStartTime)+";"+(cspBackTrackEndTime-cspBackTrackStartTime)+";"+(cspCHBackTrackEndTime-cspCHBackTrackStartTime));
 
             System.err.println("Distcsp= "+cspDist+" Distcspch="+cspCHDist);
@@ -97,6 +105,240 @@ public class CSPGraphInspector {
         }
     }
 
+    void inspectGraphCSP (){
+        Random random = new Random();
+        random.setSeed(123456789);
+        int src;
+        int trg;
+        int lambda;
+        int maxLambda = 4096;
+        int lambdaOfGood;
+        int lambdaOfBad;
+        int resourceBound;
+        int counter = 0;
+        int cspDist;
+
+
+
+        //ausgabe Variablen
+        int costUpperBound;
+        int costLowerBound;
+        int iterations;
+        int touchedNodes;
+        int touchedEdges;
+        System.out.println("Typ;Nummer;src;trg;ResBound;resource;Time;Iterations;touchedNodes;touchedEdges;AproxGüte");
+        long cspStartTime,cspEndTime;
+        //anzahl der queries
+        while (counter < 1000){
+
+            iterations = 0;
+            touchedNodes = 0;
+            touchedEdges = 0;
+            counter++;
+            System.err.println("Counter: "+counter);
+
+            src = random.nextInt(chGraph.nofNodes());
+            trg = random.nextInt(chGraph.nofNodes());
+            //resourceBound = random.nextInt(5000);
+            cspDist =  cspDijkstra.runDijkstra(src,trg,0,maxLambda);
+            if (cspDist == Integer.MAX_VALUE){
+                //kein weg gefunden
+                continue;
+            }
+            backtrackCostResourceCSP(src,trg);
+            resourceBound = (int)(resourceCSP * 1.1);
+
+            //CSP
+            cspStartTime = System.nanoTime();
+            lambda = maxLambda;
+
+            cspDist = cspDijkstra.runDijkstraWithoutSC(src, trg, lambda, maxLambda);
+
+            backtrackCostResourceCSP(src,trg);
+            costUpperBound = costCSP;
+            touchedNodes += cspDijkstra.nofTouchedNodes;
+            touchedEdges += cspDijkstra.edgeCount;
+            iterations++;
+            if(resourceCSP > resourceBound){
+                //keinen schnellsten weg mit dem entsprechenden resourcebound gefunden
+                lambdaOfBad = lambda;
+                lambda = 0;
+                cspDist = cspDijkstra.runDijkstraWithoutSC(src, trg, lambda, maxLambda);
+                backtrackCostResourceCSP(src,trg);
+                costLowerBound = costCSP;
+                touchedNodes += cspDijkstra.nofTouchedNodes;
+                touchedEdges += cspDijkstra.edgeCount;
+                iterations++;
+                if (resourceCSP > resourceBound){
+                    System.err.println("gar keinen weg unter dem resourceBound gefunden");
+                    continue;
+                }
+                lambdaOfGood = lambda;
+                lambda = (lambdaOfGood + lambdaOfBad)/2;
+                cspDist = cspDijkstra.runDijkstraWithoutSC(src, trg, lambda, maxLambda);
+                backtrackCostResourceCSP(src,trg);
+                touchedNodes += cspDijkstra.nofTouchedNodes;
+                touchedEdges += cspDijkstra.edgeCount;
+                iterations++;
+                while (lambdaOfBad - lambdaOfGood >= 1 ) {
+                    if (resourceCSP <= resourceBound) {
+                        lambdaOfGood = lambda;
+                        costLowerBound = costCSP;
+                    } else {
+                        lambdaOfBad = lambda;
+                        costUpperBound = costCSP;
+                    }
+                    if (lambdaOfBad - lambdaOfGood == 1){
+                        break;
+                    }
+                    lambda = (lambdaOfGood + lambdaOfBad) / 2;
+                    cspDist = cspDijkstra.runDijkstraWithoutSC(src, trg, lambda, maxLambda);
+                    backtrackCostResourceCSP(src,trg);
+                    touchedNodes += cspDijkstra.nofTouchedNodes;
+                    touchedEdges += cspDijkstra.edgeCount;
+                    iterations++;
+                }
+                cspDijkstra.runDijkstraWithoutSC(src, trg, lambda, maxLambda);
+                backtrackCostResourceCSP(src,trg);
+
+            } else {
+                costLowerBound = costUpperBound;
+            }
+            cspEndTime = System.nanoTime();
+            System.out.println("csp;"+counter+";"+src+";"+trg+";"+resourceBound+";"+resourceCSP+";"+(cspEndTime-cspStartTime)+";"+iterations+";"+touchedNodes+";"+touchedEdges+";"+((float)costLowerBound/(float)costUpperBound));
+
+        }
+    }
+
+    void inspectGraphCSPCH (){
+        Random random = new Random();
+        random.setSeed(123456789);
+        int src;
+        int trg;
+        int lambda;
+        int maxLambda = 4096;
+        int lambdaOfGood;
+        int lambdaOfBad;
+        int resourceBound;
+        int counter = 0;
+        int cspDist;
+
+        //ausgabe Variablen
+        int costUpperBound;
+        int costLowerBound;
+        int iterations;
+        int touchedNodes;
+        int touchedEdges;
+        System.out.println("Typ;Nummer;src;trg;ResBound;resource;Time;Iterations;touchedNodes;touchedEdges;AproxGüte");
+        long cspStartTime,cspEndTime;
+        //anzahl der queries
+        while (counter < 1000){
+
+            iterations = 0;
+            touchedNodes = 0;
+            touchedEdges = 0;
+            counter++;
+            System.err.println("Counter: "+counter);
+
+            src = random.nextInt(chGraph.nofNodes());
+            trg = random.nextInt(chGraph.nofNodes());
+            cspCHDijkstra.runDijkstra(src,trg,0,maxLambda);
+            backtrackCostResourceCSPCH(src,trg);
+            resourceBound = (int)(resourceCSPCH * 1.1);
+            //resourceBound = random.nextInt(5000);
+            //CSP
+            cspStartTime = System.nanoTime();
+            lambda = maxLambda;
+
+            cspDist = cspCHDijkstra.runDijkstra(src, trg, lambda, maxLambda);
+            if (cspDist == Integer.MAX_VALUE){
+                System.err.println("kein weg gefunden");
+                continue;
+            }
+            backtrackCostResourceCSPCH(src,trg);
+            costUpperBound = costCSPCH;
+            touchedNodes += cspCHDijkstra.nofTouchedNodes;
+            touchedEdges += cspCHDijkstra.edgeCount;
+            iterations++;
+            if(resourceCSPCH > resourceBound){
+                //keinen schnellsten weg mit dem entsprechenden resourcebound gefunden
+                lambdaOfBad = lambda;
+                lambda = 0;
+                cspDist = cspCHDijkstra.runDijkstra(src, trg, lambda, maxLambda);
+                backtrackCostResourceCSPCH(src,trg);
+                costLowerBound = costCSPCH;
+                touchedNodes += cspCHDijkstra.nofTouchedNodes;
+                touchedEdges += cspCHDijkstra.edgeCount;
+                iterations++;
+                if (resourceCSPCH > resourceBound){
+                    System.err.println("gar keinen weg unter dem resourceBound gefunden");
+                    continue;
+                }
+                lambdaOfGood = lambda;
+                lambda = (lambdaOfGood + lambdaOfBad)/2;
+                cspCHDijkstra.runDijkstra(src, trg, lambda, maxLambda);
+                backtrackCostResourceCSPCH(src,trg);
+                touchedNodes += cspCHDijkstra.nofTouchedNodes;
+                touchedEdges += cspCHDijkstra.edgeCount;
+                iterations++;
+                while (lambdaOfBad - lambdaOfGood >= 1 ) {
+                    if (resourceCSPCH <= resourceBound) {
+                        lambdaOfGood = lambda;
+                        costLowerBound = costCSPCH;
+                    } else {
+                        lambdaOfBad = lambda;
+                        costUpperBound = costCSPCH;
+                    }
+                    if (lambdaOfBad - lambdaOfGood == 1){
+                        break;
+                    }
+                    lambda = (lambdaOfGood + lambdaOfBad) / 2;
+                    cspDist = cspCHDijkstra.runDijkstra(src, trg, lambda, maxLambda);
+                    backtrackCostResourceCSPCH(src,trg);
+                    touchedNodes += cspCHDijkstra.nofTouchedNodes;
+                    touchedEdges += cspCHDijkstra.edgeCount;
+                    iterations++;
+                }
+                cspCHDijkstra.runDijkstra(src, trg, lambda, maxLambda);
+                backtrackCostResourceCSPCH(src,trg);
+
+            } else {
+                costLowerBound = costUpperBound;
+            }
+
+
+            cspEndTime = System.nanoTime();
+            System.out.println("cspch;"+counter+";"+src+";"+trg+";"+resourceBound+";"+resourceCSPCH+";"+(cspEndTime-cspStartTime)+";"+iterations+";"+touchedNodes+";"+touchedEdges+";"+((float)costLowerBound/(float)costUpperBound));
+
+        }
+    }
+
+    private void backtrackCostResourceCSP(int src, int trg){
+        int curNode = trg;
+        resourceCSP = 0;
+        costCSP = 0;
+        int curEdge;
+        while (curNode != src) {
+            curEdge = cspDijkstra.pred(curNode);
+            resourceCSP += chGraph.edgeAltitudeDifference(curEdge);
+            costCSP += chGraph.edgeWeight(curEdge);
+            curNode = (chGraph.edgeSource(curEdge));
+        }
+    }
+
+    private void backtrackCostResourceCSPCH(int src, int trg){
+        int curNode = trg;
+        resourceCSPCH = 0;
+        costCSPCH = 0;
+        int curEdge;
+        while (curNode != src) {
+            curEdge = cspCHDijkstra.pred(curNode);
+            resourceCSPCH += chGraph.edgeAltitudeDifference(curEdge);
+            costCSPCH += chGraph.edgeWeight(curEdge);
+            curNode = (chGraph.edgeSource(curEdge));
+        }
+    }
+
     private int[] cspBacktrack(int src, int trg) {
         int curNode = trg;
         int nofRouteEdges = 0;
@@ -104,7 +346,7 @@ public class CSPGraphInspector {
         while (curNode != src) {
             curEdge = cspDijkstra.pred(curNode);
             nofRouteEdges++;
-            curNode = (graph.edgeSource(curEdge));
+            curNode = (cspDijkstra.myGraph.edgeSource(curEdge));
         }
 
         // Add them without values we set the values in the next step
@@ -120,7 +362,7 @@ public class CSPGraphInspector {
         for (int i = nofRouteEdges ; i > 0; --i){
             cur_edge = cspDijkstra.pred(cur_node);
             path[i-1] = cur_edge;
-            cur_node = graph.edgeSource(cur_edge);
+            cur_node = cspDijkstra.myGraph.edgeSource(cur_edge);
         }
 
 
@@ -141,15 +383,15 @@ public class CSPGraphInspector {
         while (currNode != src) {
             curEdge = cspCHDijkstra.pred(currNode);
             deque.addFirst(curEdge);
-            currNode = graph.edgeSource(curEdge);
+            currNode = chGraph.edgeSource(curEdge);
         }
         while (!deque.isEmpty()) {
 
             curEdge = deque.removeFirst();
-            edgeSkippedA = graph.edgeSkippedA(curEdge);
+            edgeSkippedA = chGraph.edgeSkippedA(curEdge);
             if (edgeSkippedA >= 0) {
                 // We have a shortcut unpack it
-                edgeSkippedB = graph.edgeSkippedB(curEdge);
+                edgeSkippedB = chGraph.edgeSkippedB(curEdge);
                 deque.addFirst(edgeSkippedB);
                 deque.addFirst(edgeSkippedA);
             } else {
@@ -177,12 +419,12 @@ public class CSPGraphInspector {
             int curPoint = trg;
             if(path.length > 0){
                 for (int i = 0; i < path.length; ++i) {
-                    curPoint = graph.edgeSource(path[i]);
-                    System.out.println("<trkpt lat=\"" + graph.xCoord(curPoint) + "\" lon=\"" + graph.yCoord(curPoint) + "\"></trkpt>");
+                    curPoint = chGraph.edgeSource(path[i]);
+                    System.out.println("<trkpt lat=\"" + chGraph.xCoord(curPoint) + "\" lon=\"" + chGraph.yCoord(curPoint) + "\"></trkpt>");
                 }
-                curPoint = graph.edgeTarget(path[path.length-1]);
+                curPoint = chGraph.edgeTarget(path[path.length-1]);
             }
-            System.out.println("<trkpt lat=\"" + graph.xCoord(curPoint) + "\" lon=\"" + graph.yCoord(curPoint) + "\"></trkpt>");
+            System.out.println("<trkpt lat=\"" + chGraph.xCoord(curPoint) + "\" lon=\"" + chGraph.yCoord(curPoint) + "\"></trkpt>");
             System.out.println("</trkseg>\n");
             System.out.println("</trk>\n</gpx>");
     }

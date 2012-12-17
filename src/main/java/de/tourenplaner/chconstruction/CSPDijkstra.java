@@ -26,7 +26,9 @@ public class CSPDijkstra {
     PriorityQueue<PQElement> myQueue;
     int[] touchedNodes;
     int nofTouchedNodes;
+    int edgeCount;
     int lastSource;
+    int counter = 1;
 
     CSPDijkstra(SGraph _myGraph) {
         myGraph = _myGraph;
@@ -81,6 +83,7 @@ public class CSPDijkstra {
             settled[touchedNodes[i]] = false;
         }
         nofTouchedNodes = 0;
+        edgeCount = 0;
         myQueue.clear();
         // start with src
         label(src, 0,  -1);
@@ -110,11 +113,14 @@ public class CSPDijkstra {
                     int cur_altitude = myGraph.edgeAltitudeDifference(cur_edge);
                     int newDist = cur_dist + (cur_weight-cur_altitude)*lambda + maxLambda*cur_altitude;
                     if (dist[cur_trg] > newDist) {
+                        edgeCount++;
                         label(cur_trg, newDist , cur_edge);
                     }
                 }
             }
         }
+        System.out.println(counter + " Dijkstra has touched " + nofTouchedNodes + " and looked at " + edgeCount + " edges");
+        counter++;
         // System.err.println("Dijkstra has touched "+nofTouchedNodes);
         //printGeoPath(trg);
         return dist[trg];

@@ -149,6 +149,8 @@ public class Main {
                 ramGraph = new GraphReaderTXTFunke().createRAMGraph(istream);
             } else if (inputFormat.equals("textsabine")) {
                 ramGraph = new GraphReaderTXTSabine().createRAMGraph(istream);
+            } else if (inputFormat.equals("texttourcsp")) {
+                ramGraph = new GraphReaderTXTTourenplanerCSP().createRAMGraph(istream);
             } else if (inputFormat.equals("text")) {
                 ramGraph = new GraphReaderTXT().createRAMGraph(istream);
             } else if (inputFormat.equals("binfunk")) {
@@ -162,9 +164,11 @@ public class Main {
             ramGraph.sanityCheck();
             RAMGraph prunedGraph = ramGraph.pruneGraph();
             preCHBenchTest(ramGraph, prunedGraph);
-            ramGraph = null;
-            //CSPGraphInspector cspGraphInspector = new CSPGraphInspector(prunedGraph);
-            //cspGraphInspector.inspectGraph();
+            //ramGraph = null;
+            //CSPGraphInspector inspector= new CSPGraphInspector(ramGraph);
+            //inspector.inspectGraph();
+            //inspector.inspectGraphCSP();
+            //inspector.inspectGraphCSPCH();
 
             Constructor myCH;
             if (chType.equals("ch")){
@@ -187,19 +191,19 @@ public class Main {
                 int n = myCH.contractLevel(k);
                 timeDelta = System.currentTimeMillis() - curTime;
                 System.err.println("Level " + k + " contraction was " + timeDelta + " having " + n + " nodes");
-                //99,9%
-                //if (n <= 1  || (n<prunedGraph.nofNodes()/1000))
 
-                //99,5%
-                //if (n <= 1  || (n<prunedGraph.nofNodes()/200))
-                //100%
-                //if (n <= 1)
                 //99%
                 //if (n <= 1  || (n<prunedGraph.nofNodes()/100))
                 //99,4 %
                 //if (n <= 1  || (n<prunedGraph.nofNodes()*3/500))
+                //99,5%
+                //if (n <= 1  || (n<prunedGraph.nofNodes()/200))
                 //99,8%
                 //if (n <= 1  || (n<prunedGraph.nofNodes()/500))
+                //99,9%
+                //if (n <= 1  || (n<prunedGraph.nofNodes()/1000))
+                //100%
+                if (n <= 1)
                     break;
             }
 
@@ -241,6 +245,13 @@ public class Main {
                 return;
             }
 
+            int nonechedges = 0;
+            for (int i = 0 ; i < graphCH.nofEdges ; ++i){
+                if (graphCH.edgeSkippedA(i) < 0){
+                    nonechedges++;
+                }
+            }
+            System.err.println("noneedges: "+nonechedges);
 
             if (cmd.hasOption("co")){
                 int maxLevel = 40;
@@ -249,11 +260,15 @@ public class Main {
                 new CoreExporter().exportCore(graphCH, new FileOutputStream(cmd.getOptionValue("co")), maxLevel);
             }
             if (chType.equals("cspch")) {
-                CSPGraphInspector inspector= new CSPGraphInspector(graphCH);
-                inspector.inspectGraph();
+                CSPGraphInspector inspectorCH= new CSPGraphInspector(graphCH);
+                inspectorCH.inspectGraph();
+                //inspectorCH.inspectGraphCSP();
+                //inspectorCH.inspectGraphCSPCH();
             }else{
                 withChBench(prunedGraph, graphCH);
             }
+
+
 
         } catch (FileNotFoundException fnf) {
             System.err.println("Could not open the input file " + fnf.getMessage());
