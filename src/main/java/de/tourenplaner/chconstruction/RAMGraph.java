@@ -83,6 +83,7 @@ public class RAMGraph extends SGraph {
             edgeSource[i] = _original.edgeSource[i];
             edgeTarget[i] = _original.edgeTarget[i];
             edgeWeight[i] = _original.edgeWeight[i];
+            edgeLength[i] = _original.edgeLength[i];
             edgeSkippedA[i] = _original.edgeSkippedA[i];
             edgeSkippedB[i] = _original.edgeSkippedB[i];
         }
