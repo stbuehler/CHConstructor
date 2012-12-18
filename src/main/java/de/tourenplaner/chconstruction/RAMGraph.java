@@ -333,6 +333,18 @@ public class RAMGraph extends SGraph {
         return resultGraph;
     }
 
+    /**
+     * Makes sure that edgeWeight[i] > 0 for all edges
+     * by setting all lower weights to 1.
+     * Safe weights are assumed when setting up CH Shortcuts!
+     */
+    void safeWeights(){
+        for (int i = 0; i < nofEdges; i++){
+            if (edgeWeight[i] <= 0)
+                edgeWeight[i] = 1;
+        }
+    }
+
     void sanityCheck() {
         int minWeight = Integer.MAX_VALUE;
         int maxWeight = 0;

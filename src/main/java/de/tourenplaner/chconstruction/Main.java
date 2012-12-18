@@ -148,9 +148,8 @@ public class Main {
                 return;
             }
 
+            ramGraph.safeWeights();
             ramGraph.sanityCheck();
-
-
             RAMGraph prunedGraph = ramGraph.pruneGraph();
             preCHBenchTest(ramGraph, prunedGraph);
             ramGraph = null;
