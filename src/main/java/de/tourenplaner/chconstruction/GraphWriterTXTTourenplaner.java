@@ -46,7 +46,7 @@ public class GraphWriterTXTTourenplaner implements GraphWriter {
             data_out.write(ramGraph.edgeSource[j] + " ");
             data_out.write(ramGraph.edgeTarget[j] + " ");
             data_out.write(ramGraph.edgeWeight[j] + " ");
-            data_out.write(ramGraph.edgeWeight[j] + " ");
+            data_out.write(ramGraph.edgeLength[j] + " ");
             data_out.write(ramGraph.edgeSkippedA[j] + " ");
             data_out.write(ramGraph.edgeSkippedB[j] + "\n");
 
