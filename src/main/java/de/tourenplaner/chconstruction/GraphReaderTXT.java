@@ -160,7 +160,7 @@ public class GraphReaderTXT implements GraphReader {
             }
         }
 
-        if (nofNodes != graph.nofNodes() | nofEdges != graph.nofEdges()) {
+        if (nofNodes != graph.nofNodes() || nofEdges != graph.nofEdges()) {
             graph = new RAMGraph(graph);
         }
 
