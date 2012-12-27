@@ -73,9 +73,6 @@ public class GraphReaderTXTSabine implements GraphReader {
             edgeTarget = Integer.parseInt(splittedLine[1]);
             edgeWeight = Integer.parseInt(splittedLine[2]);
             edgeAltDiff = graph.height(edgeTarget)-graph.height(edgeSource);
-            if(edgeWeight == 0){
-                edgeWeight = 1;
-            }
             if (edgeAltDiff < 0) {
                 edgeAltDiff = 0;
             }

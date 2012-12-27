@@ -59,10 +59,6 @@ public class GraphReaderTXTTourenplanerCSP implements GraphReader{
             edgeSkippedA = Integer.parseInt(splittedLine[5]);
             edgeSkippedB = Integer.parseInt(splittedLine[6]);
 
-
-            if(edgeWeight == 0){
-                edgeWeight = 1;
-            }
             if (edgeAltDiff < 0) {
                 edgeAltDiff = 0;
             }
