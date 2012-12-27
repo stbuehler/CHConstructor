@@ -81,7 +81,7 @@ public class Main {
 
             src = generator.nextInt(prunedGraph.nofNodes());
             trg = generator.nextInt(prunedGraph.nofNodes());
-            }
+        }
 
     }
 
@@ -98,7 +98,7 @@ public class Main {
         options.addOption("of", "output-format", true, "Choose from bintour, textfunk, texttour, texttourcsp");
         options.addOption("i", "input-file", true, "The graph file to read from, use - for standard input");
         options.addOption("o", "output-file", true, "The graph file to write the result to, use - for standard output");
-        options.addOption("co", "coure-file", true, "The filename for the core file");
+        options.addOption("co", "core-file", true, "The filename for the core file");
         options.addOption("ml", "max-level", true, "The maximum level for the core graph (default 40)");
         options.addOption("t", "ch-type", true, "Choose from cspch, ch");
         options.addOption("h", "help", false, "Show this help message");
@@ -149,8 +149,6 @@ public class Main {
                 ramGraph = new GraphReaderTXTFunke().createRAMGraph(istream);
             } else if (inputFormat.equals("textsabine")) {
                 ramGraph = new GraphReaderTXTSabine().createRAMGraph(istream);
-            } else if (inputFormat.equals("texttourcsp")) {
-                ramGraph = new GraphReaderTXTTourenplanerCSP().createRAMGraph(istream);
             } else if (inputFormat.equals("text")) {
                 ramGraph = new GraphReaderTXT().createRAMGraph(istream);
             } else {
@@ -162,11 +160,8 @@ public class Main {
             ramGraph.sanityCheck();
             RAMGraph prunedGraph = ramGraph.pruneGraph();
             preCHBenchTest(ramGraph, prunedGraph);
-            //ramGraph = null;
-            //CSPGraphInspector inspector= new CSPGraphInspector(ramGraph);
-            //inspector.inspectGraph();
-            //inspector.inspectGraphCSP();
-            //inspector.inspectGraphCSPCH();
+            // let GC know ramGraph is collectable
+            ramGraph = null;
 
             Constructor myCH;
             if (chType.equals("ch")){
@@ -222,7 +217,7 @@ public class Main {
                 ostream = new BufferedOutputStream(new FileOutputStream("graph_out.gbin"));
             } else {
                 if (cmd.getOptionValue('o').equals("-")) {
-                    ostream = new BufferedOutputStream(System.err);
+                    ostream = new BufferedOutputStream(System.out);
                 } else {
                     ostream = new BufferedOutputStream(new FileOutputStream(cmd.getOptionValue('o')));
                 }
@@ -240,14 +235,6 @@ public class Main {
                 System.err.println("Unknown output format " + outputFormat);
                 return;
             }
-
-            int nonechedges = 0;
-            for (int i = 0 ; i < graphCH.nofEdges() ; ++i){
-                if (graphCH.getSkippedA(i) < 0){
-                    nonechedges++;
-                }
-            }
-            System.err.println("noneedges: "+nonechedges);
 
             if (cmd.hasOption("co")){
                 int maxLevel = 40;
