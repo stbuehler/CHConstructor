@@ -62,6 +62,7 @@ public class RAMGraph extends SGraph {
         nodesAdded = edgesAdded = 0;
         maxLevel = -1;
         setupMemory();
+        generator.setSeed(42);
     }
 
     /**
