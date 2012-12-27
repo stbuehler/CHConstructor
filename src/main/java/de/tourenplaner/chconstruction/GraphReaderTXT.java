@@ -137,7 +137,7 @@ public class GraphReaderTXT implements GraphReader {
                     System.err.print((10 * i / (nofNodes / 10) + "% "));
                 }
             } else {
-                graph.nofNodes--;
+                nofNodes--;
             }
         }
 
@@ -159,12 +159,12 @@ public class GraphReaderTXT implements GraphReader {
                     System.err.print((10 * i / (nofEdges / 10) + "% "));
                 }
             } else {
-                graph.nofEdges--;
+                nofEdges--;
             }
         }
 
         if (nofNodes != graph.nofNodes() || nofEdges != graph.nofEdges()) {
-            graph = new RAMGraph(graph);
+            graph = new RAMGraph(graph, nofNodes, nofEdges);
         }
 
         System.err.println("Parsing took " + (System.currentTimeMillis() - curTime));

@@ -21,22 +21,11 @@ package de.tourenplaner.chconstruction;
 
 public abstract class SGraph {
 
-    int nofEdges;
-    int nofNodes;
-
-    SGraph() {
-        nofEdges = nofNodes = 0;
-    }
-
-
     // interface for accessing Graph data
-    int nofEdges() {
-        return nofEdges;
-    }
+    abstract int nofEdges();
 
-    int nofNodes() {
-        return nofNodes;
-    }
+    abstract int nofNodes();
+
 
     abstract float getLat(int nodeID);
 

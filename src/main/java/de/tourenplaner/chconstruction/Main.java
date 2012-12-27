@@ -242,7 +242,7 @@ public class Main {
             }
 
             int nonechedges = 0;
-            for (int i = 0 ; i < graphCH.nofEdges ; ++i){
+            for (int i = 0 ; i < graphCH.nofEdges() ; ++i){
                 if (graphCH.getSkippedA(i) < 0){
                     nonechedges++;
                 }

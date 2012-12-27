@@ -13,6 +13,8 @@ import java.util.Random;
 
 public class RAMGraph extends SGraph {
 
+    private int nofNodes;
+    private int nofEdges;
 
     // DATA for VERTICES
     private float[] lats;
@@ -62,10 +64,18 @@ public class RAMGraph extends SGraph {
         setupMemory();
     }
 
-    RAMGraph(RAMGraph _original) {
-        nofNodes = _original.nofNodes;
-        nofEdges = _original.nofEdges;
-        maxLevel = _original.maxLevel;
+    /**
+     * Create a partial copy of orignal graph, use .clone() for
+     * real copy. Note that we can only do partial copies "from the start"
+     * up to newNofNodes, newNofEdges
+     * @param _original
+     * @param newNofEdges
+     * @param newNofNodes
+     */
+    RAMGraph(RAMGraph _original, int newNofNodes, int newNofEdges) {
+        nofNodes = newNofNodes;
+        nofEdges = newNofEdges;
+        maxLevel = 0;
         setupMemory();
         for (int i = 0; i < nofNodes; i++) {
             lats[i] = _original.lats[i];
@@ -74,6 +84,8 @@ public class RAMGraph extends SGraph {
             height[i] = _original.height[i];
             OSMID[i] = _original.OSMID[i];
             level[i] = _original.level[i];
+            if (level[i] > maxLevel)
+                maxLevel = level[i];
             outEdgeOffset[i] = _original.outEdgeOffset[i];
             inEdgeOffset[i] = _original.inEdgeOffset[i];
         }
@@ -545,6 +557,16 @@ public class RAMGraph extends SGraph {
         edgesAdded++;
     }
 
+
+    @Override
+    int nofEdges() {
+        return nofEdges;
+    }
+
+    @Override
+    int nofNodes() {
+        return nofNodes;
+    }
 
     // overwritten methods
     float getLat(int nodeID) {

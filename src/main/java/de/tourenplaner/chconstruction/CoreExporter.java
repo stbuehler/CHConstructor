@@ -54,7 +54,7 @@ public class CoreExporter {
 
             System.err.print("\n Edges: ");
             // write-out edges
-            for (int j = 0; j < g.nofEdges; j++) {
+            for (int j = 0; j < g.nofEdges(); j++) {
                 int src = g.getSource(j);
                 int trg = g.getTarget(j);
                 if ((g.getLevel(src) >= lvlBound) && (g.getLevel(trg) >= lvlBound)) {
@@ -73,8 +73,8 @@ public class CoreExporter {
                         data_out.write("\n");
                     }
                 }
-                if ((j % (g.nofEdges / 10)) == 0) {
-                    System.err.print((10 * j / (g.nofEdges / 10) + "% "));
+                if ((j % (g.nofEdges() / 10)) == 0) {
+                    System.err.print((10 * j / (g.nofEdges() / 10) + "% "));
                 }
             }
             data_out.close();

@@ -45,13 +45,13 @@ public class GraphWriterTXTTourenplanerCSP implements GraphWriter {
             data_out.write(ramGraph.getHeight(i) + " ");
             data_out.write(ramGraph.getLevel(i) + "\n");
 
-            if ((i % (ramGraph.nofNodes / 10)) == 0) {
-                System.err.print((10 * i / (ramGraph.nofNodes / 10) + "% "));
+            if ((i % (ramGraph.nofNodes() / 10)) == 0) {
+                System.err.print((10 * i / (ramGraph.nofNodes() / 10) + "% "));
             }
         }
         System.err.print("\n Edges: ");
         // write-out edges
-        for (int j = 0; j < ramGraph.nofEdges; j++) {
+        for (int j = 0; j < ramGraph.nofEdges(); j++) {
             data_out.write(ramGraph.getSource(j) + " ");
             data_out.write(ramGraph.getTarget(j) + " ");
             data_out.write(ramGraph.getWeight(j) + " ");
@@ -60,8 +60,8 @@ public class GraphWriterTXTTourenplanerCSP implements GraphWriter {
             data_out.write(ramGraph.getSkippedA(j) + " ");
             data_out.write(ramGraph.getSkippedB(j) + "\n");
 
-            if ((j % (ramGraph.nofEdges / 10)) == 0) {
-                System.err.print((10 * j / (ramGraph.nofEdges / 10) + "% "));
+            if ((j % (ramGraph.nofEdges() / 10)) == 0) {
+                System.err.print((10 * j / (ramGraph.nofEdges() / 10) + "% "));
             }
         }
         data_out.close();
