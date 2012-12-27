@@ -92,8 +92,6 @@ public class Main {
         CommandLineParser parser = new GnuParser();
         Options options = new Options();
 
-        options.addOption("ti", "text-input", false, "Read input graph in text mode");
-        options.addOption("to", "text-output", false, "Write output graph in text mode");
         options.addOption("if", "input-format", true, "Choose from textfunk, textsabine, text");
         options.addOption("of", "output-format", true, "Choose from bintour, textfunk, texttour, texttourcsp");
         options.addOption("i", "input-file", true, "The graph file to read from, use - for standard input");
