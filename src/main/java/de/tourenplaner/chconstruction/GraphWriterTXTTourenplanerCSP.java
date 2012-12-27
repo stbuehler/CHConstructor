@@ -40,10 +40,10 @@ public class GraphWriterTXTTourenplanerCSP implements GraphWriter {
         // write-out coordinates and levels
         System.err.print("\n Nodes:");
         for (int i = 0; i < ramGraph.nofNodes(); i++) {
-            data_out.write((int) (ramGraph.xCoord[i] * 10000000.0) + " ");
-            data_out.write((int) (ramGraph.yCoord[i] * 10000000.0) + " ");
-            data_out.write(ramGraph.height[i] + " ");
-            data_out.write(ramGraph.level[i] + "\n");
+            data_out.write((int) (ramGraph.getLat(i) * 10000000.0) + " ");
+            data_out.write((int) (ramGraph.getLon(i) * 10000000.0) + " ");
+            data_out.write(ramGraph.getHeight(i) + " ");
+            data_out.write(ramGraph.getLevel(i) + "\n");
 
             if ((i % (ramGraph.nofNodes / 10)) == 0) {
                 System.err.print((10 * i / (ramGraph.nofNodes / 10) + "% "));
@@ -52,13 +52,13 @@ public class GraphWriterTXTTourenplanerCSP implements GraphWriter {
         System.err.print("\n Edges: ");
         // write-out edges
         for (int j = 0; j < ramGraph.nofEdges; j++) {
-            data_out.write(ramGraph.edgeSource[j] + " ");
-            data_out.write(ramGraph.edgeTarget[j] + " ");
-            data_out.write(ramGraph.edgeWeight[j] + " ");
-            data_out.write(ramGraph.edgeLength[j] + " ");
-            data_out.write(ramGraph.edgeAltitudeDifference[j] + " ");
-            data_out.write(ramGraph.edgeSkippedA[j] + " ");
-            data_out.write(ramGraph.edgeSkippedB[j] + "\n");
+            data_out.write(ramGraph.getSource(j) + " ");
+            data_out.write(ramGraph.getTarget(j) + " ");
+            data_out.write(ramGraph.getWeight(j) + " ");
+            data_out.write(ramGraph.getEuclidianLength(j) + " ");
+            data_out.write(ramGraph.getAltitudeDifference(j) + " ");
+            data_out.write(ramGraph.getSkippedA(j) + " ");
+            data_out.write(ramGraph.getSkippedB(j) + "\n");
 
             if ((j % (ramGraph.nofEdges / 10)) == 0) {
                 System.err.print((10 * j / (ramGraph.nofEdges / 10) + "% "));

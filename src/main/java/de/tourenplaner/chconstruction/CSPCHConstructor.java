@@ -45,11 +45,11 @@ public class CSPCHConstructor extends Constructor{
         tempGraph = new RAMGraph(myGraph.nofNodes(), myGraph.nofEdges());
         for (int i = 0; i < myGraph.nofNodes(); i++)    // first add the original graph
         {
-            myCHGraph.addNode(myGraph.xCoord(i), _myGraph.yCoord(i), myGraph.altNodeID(i), myGraph.height(i), myGraph.OSMID(i), Integer.MAX_VALUE);
-            tempGraph.addNode(myGraph.xCoord(i), _myGraph.yCoord(i), i, myGraph.height(i), myGraph.OSMID(i), Integer.MAX_VALUE); // here alt denotes ID
+            myCHGraph.addNode(myGraph.getLat(i), _myGraph.getLon(i), myGraph.getAltNodeID(i), myGraph.getHeight(i), myGraph.getOSMID(i), Integer.MAX_VALUE);
+            tempGraph.addNode(myGraph.getLat(i), _myGraph.getLon(i), i, myGraph.getHeight(i), myGraph.getOSMID(i), Integer.MAX_VALUE); // here alt denotes ID
         }
         for (int j = 0; j < myGraph.nofEdges(); j++) {
-            int orgSrc = myGraph.edgeSource(j), orgTrg = myGraph.edgeTarget(j), orgWeight = myGraph.edgeWeight(j), orgLength = myGraph.edgeLength(j), orgHeight = myGraph.edgeAltitudeDifference(j);
+            int orgSrc = myGraph.getSource(j), orgTrg = myGraph.getTarget(j), orgWeight = myGraph.getWeight(j), orgLength = myGraph.getEuclidianLength(j), orgHeight = myGraph.getAltitudeDifference(j);
             myCHGraph.addEdge(orgSrc, orgTrg, orgWeight, orgLength, orgHeight, -1, -1);
             tempGraph.addEdge(orgSrc, orgTrg, orgWeight, orgLength, orgHeight, -1, -1);
         }
@@ -63,13 +63,13 @@ public class CSPCHConstructor extends Constructor{
         int nofSC = 0;
         for (int i = 0; i < tempGraph.nofInEdges(curNode); i++) {
             int curSrcEdge = tempGraph.inEdgeID(curNode, i);
-            int curSrc = tempGraph.edgeSource(curSrcEdge);
+            int curSrc = tempGraph.getSource(curSrcEdge);
             for (int j = 0; j < tempGraph.nofOutEdges(curNode); j++) {
                 int curTrgEdge = tempGraph.outEdgeID(curNode, j);
-                int curTrg = tempGraph.edgeTarget(curTrgEdge);
-                int weightSC = tempGraph.edgeWeight(curSrcEdge) + tempGraph.edgeWeight(curTrgEdge);
-                int lengthSC = tempGraph.edgeLength(curSrcEdge) + tempGraph.edgeLength(curTrgEdge);
-                int altitudeSC = tempGraph.edgeAltitudeDifference(curSrcEdge) + tempGraph.edgeAltitudeDifference(curTrgEdge);
+                int curTrg = tempGraph.getTarget(curTrgEdge);
+                int weightSC = tempGraph.getWeight(curSrcEdge) + tempGraph.getWeight(curTrgEdge);
+                int lengthSC = tempGraph.getEuclidianLength(curSrcEdge) + tempGraph.getEuclidianLength(curTrgEdge);
+                int altitudeSC = tempGraph.getAltitudeDifference(curSrcEdge) + tempGraph.getAltitudeDifference(curTrgEdge);
                 boolean adden = addShortcut(myDijkstra,curSrc,curTrg,weightSC,altitudeSC);
                 //if (d==weightSC) // better: check if pred[curTrg]==curNode and pred[curNode]==curSrc
                 if (adden){ //&& myDijkstra.pred(curTrg) == curNode) {
@@ -136,9 +136,9 @@ public class CSPCHConstructor extends Constructor{
         int curEdge;
         while (curNode != curSrc){
             curEdge = myDijkstra.pred(curNode);
-            weightSum += myDijkstra.myGraph.edgeWeight(curEdge);
-            resourceSum += myDijkstra.myGraph.edgeAltitudeDifference(curEdge);
-            curNode = myDijkstra.myGraph.edgeSource(curEdge);
+            weightSum += myDijkstra.myGraph.getWeight(curEdge);
+            resourceSum += myDijkstra.myGraph.getAltitudeDifference(curEdge);
+            curNode = myDijkstra.myGraph.getSource(curEdge);
         }
     }
 
@@ -172,12 +172,12 @@ public class CSPCHConstructor extends Constructor{
                 nofCandidates++;
                 for (int j = 0; j < tempGraph.nofInEdges(curNode); j++) {
                     int edgeID = tempGraph.inEdgeID(curNode, j);
-                    int src = tempGraph.edgeSource(edgeID);
+                    int src = tempGraph.getSource(edgeID);
                     stillIndep[src] = false;
                 }
                 for (int j = 0; j < tempGraph.nofOutEdges(curNode); j++) {
                     int edgeID = tempGraph.outEdgeID(curNode, j);
-                    int trg = tempGraph.edgeTarget(edgeID);
+                    int trg = tempGraph.getTarget(edgeID);
                     stillIndep[trg] = false;
                 }
             }
@@ -326,7 +326,7 @@ public class CSPCHConstructor extends Constructor{
 
         assert (realContract == tempGraph.nofNodes() - newNofNodes);
         for (int j = 0; j < tempGraph.nofEdges(); j++)
-            if ((!contracted[tempGraph.edgeSource(j)]) && (!contracted[tempGraph.edgeTarget[j]]))
+            if ((!contracted[tempGraph.getSource(j)]) && (!contracted[tempGraph.getTarget(j)]))
                 newNofEdges++;
             else
                 nofDeletedEdges++;
@@ -341,17 +341,17 @@ public class CSPCHConstructor extends Constructor{
         int[] old2new = new int[tempGraph.nofNodes()];
         for (int i = 0; i < tempGraph.nofNodes(); i++)
             if (!contracted[i]) {
-                old2new[i] = newTempGraph.addNode(tempGraph.xCoord(i), tempGraph.yCoord(i), tempGraph.altNodeID(i), tempGraph.height(i), tempGraph.OSMID(i), 0);
+                old2new[i] = newTempGraph.addNode(tempGraph.getLat(i), tempGraph.getLon(i), tempGraph.getAltNodeID(i), tempGraph.getHeight(i), tempGraph.getOSMID(i), 0);
             } else {
                 old2new[i] = -1;
-                assert (myCHGraph.level[tempGraph.altNodeID(i)] == Integer.MAX_VALUE);
-                myCHGraph.level[tempGraph.altNodeID(i)] = newLevel;
+                assert (myCHGraph.getLevel(tempGraph.getAltNodeID(i)) == Integer.MAX_VALUE);
+                myCHGraph.setLevel(tempGraph.getAltNodeID(i), newLevel);
             }
 
 
         /// / copy surviving edges to newTempGraph
         for (int j = 0; j < tempGraph.nofEdges(); j++) {
-            int curSrc = tempGraph.edgeSource(j), curTrg = tempGraph.edgeTarget(j), curWgt = tempGraph.edgeWeight(j), curEdgeLength = tempGraph.edgeLength(j), curEdgeHeight = tempGraph.edgeAltitudeDifference(j);
+            int curSrc = tempGraph.getSource(j), curTrg = tempGraph.getTarget(j), curWgt = tempGraph.getWeight(j), curEdgeLength = tempGraph.getEuclidianLength(j), curEdgeHeight = tempGraph.getAltitudeDifference(j);
 
             if ((!contracted[curSrc]) && (!contracted[curTrg]))    // copy edge to newTempGraph
             {
@@ -365,7 +365,7 @@ public class CSPCHConstructor extends Constructor{
         System.err.println("No of added SCs: " + totalNofSC);
         for (int j = 0; j < totalNofSC; j++) {
             newTempGraph.addEdge(old2new[srcSCfinal[j]], old2new[trgSCfinal[j]], wgtSCfinal[j], lgthSCfinal[j], altDiffSCfinal[j], -2, -2);
-            myCHGraph.addEdge(tempGraph.altNodeID(srcSCfinal[j]), tempGraph.altNodeID(trgSCfinal[j]), wgtSCfinal[j], lgthSCfinal[j], altDiffSCfinal[j], -2, -2);
+            myCHGraph.addEdge(tempGraph.getAltNodeID(srcSCfinal[j]), tempGraph.getAltNodeID(trgSCfinal[j]), wgtSCfinal[j], lgthSCfinal[j], altDiffSCfinal[j], -2, -2);
         }
 
         newTempGraph.setupOffsets();

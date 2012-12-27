@@ -56,13 +56,13 @@ public class CHDijkstra extends BDDijkstra {
                     //for(int j=0; j<myGraph.nofInEdges(cur_node); j++)
                     for (int j = myGraph.nofInEdges(cur_node) - 1; j >= 0; j--) {
                         int tmp_edge = myGraph.inEdgeID(cur_node, j);
-                        int tmp_wgt = myGraph.edgeWeight(tmp_edge);
-                        int tmp_node = myGraph.edgeSource(tmp_edge);
+                        int tmp_wgt = myGraph.getWeight(tmp_edge);
+                        int tmp_node = myGraph.getSource(tmp_edge);
                         if (distFwd[cur_node] - tmp_wgt > distFwd[tmp_node]) {
                             stalled = true;
                             break;
                         }
-                        if (myGraph.level(tmp_node) < myGraph.level(cur_node))
+                        if (myGraph.getLevel(tmp_node) < myGraph.getLevel(cur_node))
                             break;
                     }
 
@@ -72,13 +72,13 @@ public class CHDijkstra extends BDDijkstra {
                     if (!stalled)
                         for (int i = myGraph.nofOutEdges(cur_node) - 1; i >= 0; i--) {
                             int cur_edge = myGraph.outEdgeID(cur_node, i);
-                            int cur_trg = myGraph.edgeTarget(cur_edge);
-                            int cur_weight = myGraph.edgeWeight(cur_edge);
-                            if (myGraph.level(cur_trg) >= myGraph.level(cur_node))
+                            int cur_trg = myGraph.getTarget(cur_edge);
+                            int cur_weight = myGraph.getWeight(cur_edge);
+                            if (myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node))
                                 edgeCount++;
                             else
                                 break;
-                            if ((myGraph.level(cur_trg) >= myGraph.level(cur_node)) && (distFwd[cur_trg] > cur_dist + cur_weight)) {
+                            if ((myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node)) && (distFwd[cur_trg] > cur_dist + cur_weight)) {
                                 labelFwd(cur_trg, cur_dist + cur_weight);
                             }
                         }
@@ -93,13 +93,13 @@ public class CHDijkstra extends BDDijkstra {
                     //for(int j=0; j<myGraph.nofOutEdges(cur_node); j++)
                     for (int j = myGraph.nofOutEdges(cur_node) - 1; j >= 0; j--) {
                         int tmp_edge = myGraph.outEdgeID(cur_node, j);
-                        int tmp_wgt = myGraph.edgeWeight(tmp_edge);
-                        int tmp_node = myGraph.edgeTarget(tmp_edge);
+                        int tmp_wgt = myGraph.getWeight(tmp_edge);
+                        int tmp_node = myGraph.getTarget(tmp_edge);
                         if (distBwd[cur_node] - tmp_wgt > distBwd[tmp_node]) {
                             stalled = true;
                             break;
                         }
-                        if (myGraph.level(cur_node) > myGraph.level(tmp_node))
+                        if (myGraph.getLevel(cur_node) > myGraph.getLevel(tmp_node))
                             break;
                     }
 
@@ -110,13 +110,13 @@ public class CHDijkstra extends BDDijkstra {
                     if (!stalled)
                         for (int i = myGraph.nofInEdges(cur_node) - 1; i >= 0; i--) {
                             int cur_edge = myGraph.inEdgeID(cur_node, i);
-                            int cur_trg = myGraph.edgeSource(cur_edge);
-                            int cur_weight = myGraph.edgeWeight(cur_edge);
-                            if (myGraph.level(cur_trg) >= myGraph.level(cur_node))
+                            int cur_trg = myGraph.getSource(cur_edge);
+                            int cur_weight = myGraph.getWeight(cur_edge);
+                            if (myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node))
                                 edgeCount++;
                             else
                                 break;
-                            if ((myGraph.level(cur_trg) >= myGraph.level(cur_node)) && (distBwd[cur_trg] > cur_dist + cur_weight)) {
+                            if ((myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node)) && (distBwd[cur_trg] > cur_dist + cur_weight)) {
                                 labelBwd(cur_trg, cur_dist + cur_weight);
                             }
                         }
@@ -145,8 +145,8 @@ public class CHDijkstra extends BDDijkstra {
                     myTmpDijkstraF.runDijkstra(src, curNode);
                     assert (myTmpDijkstraF.dist[curNode] != Integer.MAX_VALUE);
                     if (myTmpDijkstraF.dist[curNode] == fwdDist) {
-                        if (myGraph.level(curNode) > 80)
-                            System.err.print(curNode + "(" + myGraph.level(curNode) + ") ");
+                        if (myGraph.getLevel(curNode) > 80)
+                            System.err.print(curNode + "(" + myGraph.getLevel(curNode) + ") ");
                         fwdOK++;
                         fwdUse = true;
                     }
@@ -181,16 +181,16 @@ public class CHDijkstra extends BDDijkstra {
             for (int j = 0; j < myGraph.nofOutEdges(i) - 1; j++) {
                 int cur_edge = myGraph.outEdgeID(i, j);
                 int next_edge = myGraph.outEdgeID(i, j + 1);
-                int trg_node = myGraph.edgeTarget(cur_edge);
-                int next_trg_node = myGraph.edgeTarget(next_edge);
-                assert (myGraph.level(trg_node) <= myGraph.level(next_trg_node));
+                int trg_node = myGraph.getTarget(cur_edge);
+                int next_trg_node = myGraph.getTarget(next_edge);
+                assert (myGraph.getLevel(trg_node) <= myGraph.getLevel(next_trg_node));
             }
             for (int j = 0; j < myGraph.nofInEdges(i) - 1; j++) {
                 int cur_edge = myGraph.inEdgeID(i, j);
                 int next_edge = myGraph.inEdgeID(i, j + 1);
-                int src_node = myGraph.edgeSource(cur_edge);
-                int next_src_node = myGraph.edgeSource(next_edge);
-                assert (myGraph.level(src_node) <= myGraph.level(next_src_node));
+                int src_node = myGraph.getSource(cur_edge);
+                int next_src_node = myGraph.getSource(next_edge);
+                assert (myGraph.getLevel(src_node) <= myGraph.getLevel(next_src_node));
             }
         }
         System.err.println("CH Reqs ok!");

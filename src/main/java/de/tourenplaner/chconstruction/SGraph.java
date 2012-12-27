@@ -38,17 +38,17 @@ public abstract class SGraph {
         return nofNodes;
     }
 
-    abstract float xCoord(int nodeID);
+    abstract float getLat(int nodeID);
 
-    abstract float yCoord(int nodeID);
+    abstract float getLon(int nodeID);
 
-    abstract int altNodeID(int nodeID);
+    abstract int getAltNodeID(int nodeID);
 
-    abstract int height(int nodeID);
+    abstract int getHeight(int nodeID);
 
-    abstract int OSMID(int nodeID);
+    abstract int getOSMID(int nodeID);
 
-    abstract int level(int nodeID);
+    abstract int getLevel(int nodeID);
 
 
     abstract int nofOutEdges(int nodeID);
@@ -60,17 +60,17 @@ public abstract class SGraph {
     abstract int inEdgeID(int nodeID, int edgePos);    // returns edge ID of edgePos-th inEdge of nodeID
 
 
-    abstract int edgeSource(int edgeID);
+    abstract int getSource(int edgeID);
 
-    abstract int edgeTarget(int edgeID);
+    abstract int getTarget(int edgeID);
 
-    abstract int edgeWeight(int edgeID);
+    abstract int getWeight(int edgeID);
 
-    abstract int edgeLength(int edgeID);
+    abstract int getEuclidianLength(int edgeID);
 
-    abstract int edgeAltitudeDifference(int edgeID);
+    abstract int getAltitudeDifference(int edgeID);
 
-    abstract int edgeSkippedA(int edgeID);
+    abstract int getSkippedA(int edgeID);
 
-    abstract int edgeSkippedB(int edgeID);
+    abstract int getSkippedB(int edgeID);
 }

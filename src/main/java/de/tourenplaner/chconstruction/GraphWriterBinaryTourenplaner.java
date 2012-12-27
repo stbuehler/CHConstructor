@@ -43,20 +43,20 @@ public class GraphWriterBinaryTourenplaner implements GraphWriter {
 
         // Write nodes
         for (int i = 0; i < numNodes; i++) {
-            dout.writeInt((int) (ramGraph.xCoord(i) * 10000000.0));
-            dout.writeInt((int) (ramGraph.yCoord(i) * 10000000.0));
-            dout.writeInt(ramGraph.height(i));
-            dout.writeInt(ramGraph.level(i));
+            dout.writeInt((int) (ramGraph.getLat(i) * 10000000.0));
+            dout.writeInt((int) (ramGraph.getLon(i) * 10000000.0));
+            dout.writeInt(ramGraph.getHeight(i));
+            dout.writeInt(ramGraph.getLevel(i));
         }
 
         // Write edges
         for (int i = 0; i < numEdges; i++) {
-            dout.writeInt(ramGraph.edgeSource(i));
-            dout.writeInt(ramGraph.edgeTarget(i));
-            dout.writeInt(ramGraph.edgeWeight(i));
-            dout.writeInt(ramGraph.edgeLength(i));
-            dout.writeInt(ramGraph.edgeSkippedA(i));
-            dout.writeInt(ramGraph.edgeSkippedB(i));
+            dout.writeInt(ramGraph.getSource(i));
+            dout.writeInt(ramGraph.getTarget(i));
+            dout.writeInt(ramGraph.getWeight(i));
+            dout.writeInt(ramGraph.getEuclidianLength(i));
+            dout.writeInt(ramGraph.getSkippedA(i));
+            dout.writeInt(ramGraph.getSkippedB(i));
         }
 
         bout.flush();

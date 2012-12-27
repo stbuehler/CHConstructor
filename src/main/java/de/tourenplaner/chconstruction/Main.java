@@ -57,10 +57,10 @@ public class Main {
         int minDist = Integer.MAX_VALUE;
 
         for (int i = 0; i < 100; i++) {
-            //if ((graphCH.level(src)>0)&&(graphCH.level(trg)>0))
+            //if ((graphCH.getLevel(src)>0)&&(graphCH.getLevel(trg)>0))
 
             curTime = System.nanoTime();
-            int dist = myDijkstra.runDijkstra(graphCH.altNodeID(src), graphCH.altNodeID(trg));
+            int dist = myDijkstra.runDijkstra(graphCH.getAltNodeID(src), graphCH.getAltNodeID(trg));
             timeDelta = (System.nanoTime() - curTime) / 1000;
 
 
@@ -69,9 +69,9 @@ public class Main {
             long timeDelta2 = (System.nanoTime() - curTime) / 1000;
 
             minDist = dist;
-            System.err.println("Distance from " + graphCH.altNodeID(src) + " to " + graphCH.altNodeID(trg) + " is " + dist + " in time " + timeDelta);
+            System.err.println("Distance from " + graphCH.getAltNodeID(src) + " to " + graphCH.getAltNodeID(trg) + " is " + dist + " in time " + timeDelta);
             System.err.println("CH-Distance in CH from " + src + " to " + trg + " is " + dist2 + " in time " + timeDelta2);
-            System.err.println("Levels are " + graphCH.level(src) + "/" + graphCH.level(trg));
+            System.err.println("Levels are " + graphCH.getLevel(src) + "/" + graphCH.getLevel(trg));
             if (dist == Integer.MAX_VALUE)
                 System.err.println("*******************************************************");
             // myDijkstra.printPath(trg);
@@ -94,8 +94,8 @@ public class Main {
 
         options.addOption("ti", "text-input", false, "Read input graph in text mode");
         options.addOption("to", "text-output", false, "Write output graph in text mode");
-        options.addOption("if", "input-format", true, "Choose from binfunk, textfunk, textsabine, text");
-        options.addOption("of", "output-format", true, "Choose from binfunk, bintour, textfunk, texttour, texttourcsp");
+        options.addOption("if", "input-format", true, "Choose from textfunk, textsabine, text");
+        options.addOption("of", "output-format", true, "Choose from bintour, textfunk, texttour, texttourcsp");
         options.addOption("i", "input-file", true, "The graph file to read from, use - for standard input");
         options.addOption("o", "output-file", true, "The graph file to write the result to, use - for standard output");
         options.addOption("co", "coure-file", true, "The filename for the core file");
@@ -153,8 +153,6 @@ public class Main {
                 ramGraph = new GraphReaderTXTTourenplanerCSP().createRAMGraph(istream);
             } else if (inputFormat.equals("text")) {
                 ramGraph = new GraphReaderTXT().createRAMGraph(istream);
-            } else if (inputFormat.equals("binfunk")) {
-                ramGraph = new GraphReaderBinaryFunke().createRAMGraph(istream);
             } else {
                 System.err.println("Unknown input format " + inputFormat);
                 return;
@@ -238,8 +236,6 @@ public class Main {
                 new GraphWriterTXTFunke().writeRAMGraph(ostream, graphCH);
             } else if (outputFormat.equals("bintour")) {
                 new GraphWriterBinaryTourenplaner().writeRAMGraph(ostream, graphCH);
-            } else if (outputFormat.equals("binfunk")) {
-                new GraphWriterBinaryFunke().writeRAMGraph(ostream, graphCH);
             } else {
                 System.err.println("Unknown output format " + outputFormat);
                 return;
@@ -247,7 +243,7 @@ public class Main {
 
             int nonechedges = 0;
             for (int i = 0 ; i < graphCH.nofEdges ; ++i){
-                if (graphCH.edgeSkippedA(i) < 0){
+                if (graphCH.getSkippedA(i) < 0){
                     nonechedges++;
                 }
             }

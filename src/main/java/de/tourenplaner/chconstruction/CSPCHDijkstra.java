@@ -80,16 +80,16 @@ public class CSPCHDijkstra extends BDDijkstra {
                     //for(int j=0; j<myGraph.nofInEdges(cur_node); j++)
                     for (int j = myGraph.nofInEdges(cur_node) - 1; j >= 0; j--) {
                         int tmp_edge = myGraph.inEdgeID(cur_node, j);
-                        int tmp_resource = myGraph.edgeAltitudeDifference(tmp_edge);
-                        int tmp_wgt = (myGraph.edgeWeight(tmp_edge)-tmp_resource)*lambda + maxLambda*tmp_resource;
+                        int tmp_resource = myGraph.getAltitudeDifference(tmp_edge);
+                        int tmp_wgt = (myGraph.getWeight(tmp_edge)-tmp_resource)*lambda + maxLambda*tmp_resource;
 
 
-                        int tmp_node = myGraph.edgeSource(tmp_edge);
+                        int tmp_node = myGraph.getSource(tmp_edge);
                         if (distFwd[cur_node] - tmp_wgt > distFwd[tmp_node]) {
                             stalled = true;
                             break;
                         }
-                        if (myGraph.level(tmp_node) < myGraph.level(cur_node))
+                        if (myGraph.getLevel(tmp_node) < myGraph.getLevel(cur_node))
                             break;
                     }
 
@@ -101,15 +101,15 @@ public class CSPCHDijkstra extends BDDijkstra {
                     if (!stalled)
                         for (int i = myGraph.nofOutEdges(cur_node) - 1; i >= 0; i--) {
                             int cur_edge = myGraph.outEdgeID(cur_node, i);
-                            int cur_trg = myGraph.edgeTarget(cur_edge);
-                            int cur_weight = myGraph.edgeWeight(cur_edge);
-                            int cur_resource = myGraph.edgeAltitudeDifference(cur_edge);
+                            int cur_trg = myGraph.getTarget(cur_edge);
+                            int cur_weight = myGraph.getWeight(cur_edge);
+                            int cur_resource = myGraph.getAltitudeDifference(cur_edge);
                             int new_Dist = cur_dist+ (cur_weight-cur_resource)*lambda + maxLambda*cur_resource;
-                            if (myGraph.level(cur_trg) >= myGraph.level(cur_node))
+                            if (myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node))
                                 edgeCount++;
                             else
                                 break;
-                            if ((myGraph.level(cur_trg) >= myGraph.level(cur_node)) && (distFwd[cur_trg] > new_Dist)) {
+                            if ((myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node)) && (distFwd[cur_trg] > new_Dist)) {
                                 labelFwd(cur_trg, new_Dist, cur_edge);
                             }
                         }
@@ -124,14 +124,14 @@ public class CSPCHDijkstra extends BDDijkstra {
                     //for(int j=0; j<myGraph.nofOutEdges(cur_node); j++)
                     for (int j = myGraph.nofOutEdges(cur_node) - 1; j >= 0; j--) {
                         int tmp_edge = myGraph.outEdgeID(cur_node, j);
-                        int tmp_resource = myGraph.edgeAltitudeDifference(tmp_edge);
-                        int tmp_wgt = (myGraph.edgeWeight(tmp_edge)-tmp_resource)*lambda + maxLambda*tmp_resource;
-                        int tmp_node = myGraph.edgeTarget(tmp_edge);
+                        int tmp_resource = myGraph.getAltitudeDifference(tmp_edge);
+                        int tmp_wgt = (myGraph.getWeight(tmp_edge)-tmp_resource)*lambda + maxLambda*tmp_resource;
+                        int tmp_node = myGraph.getTarget(tmp_edge);
                         if (distBwd[cur_node] - tmp_wgt > distBwd[tmp_node]) {
                             stalled = true;
                             break;
                         }
-                        if (myGraph.level(cur_node) > myGraph.level(tmp_node))
+                        if (myGraph.getLevel(cur_node) > myGraph.getLevel(tmp_node))
                             break;
                     }
 
@@ -143,15 +143,15 @@ public class CSPCHDijkstra extends BDDijkstra {
                     if (!stalled)
                         for (int i = myGraph.nofInEdges(cur_node) - 1; i >= 0; i--) {
                             int cur_edge = myGraph.inEdgeID(cur_node, i);
-                            int cur_trg = myGraph.edgeSource(cur_edge);
-                            int cur_weight = myGraph.edgeWeight(cur_edge);
-                            int cur_resource = myGraph.edgeAltitudeDifference(cur_edge);
+                            int cur_trg = myGraph.getSource(cur_edge);
+                            int cur_weight = myGraph.getWeight(cur_edge);
+                            int cur_resource = myGraph.getAltitudeDifference(cur_edge);
                             int new_Dist = cur_dist + (cur_weight-cur_resource)*lambda + maxLambda*cur_resource;
-                            if (myGraph.level(cur_trg) >= myGraph.level(cur_node))
+                            if (myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node))
                                 edgeCount++;
                             else
                                 break;
-                            if ((myGraph.level(cur_trg) >= myGraph.level(cur_node)) && (distBwd[cur_trg] > new_Dist)) {
+                            if ((myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node)) && (distBwd[cur_trg] > new_Dist)) {
                                 labelBwd(cur_trg, new_Dist, cur_edge);
                             }
                         }
@@ -182,8 +182,8 @@ public class CSPCHDijkstra extends BDDijkstra {
                     myTmpDijkstraF.runDijkstra(src, curNode);
                     assert (myTmpDijkstraF.dist[curNode] != Integer.MAX_VALUE);
                     if (myTmpDijkstraF.dist[curNode] == fwdDist) {
-                        if (myGraph.level(curNode) > 80)
-                            System.err.print(curNode + "(" + myGraph.level(curNode) + ") ");
+                        if (myGraph.getLevel(curNode) > 80)
+                            System.err.print(curNode + "(" + myGraph.getLevel(curNode) + ") ");
                         fwdOK++;
                         fwdUse = true;
                     }
@@ -221,12 +221,12 @@ public class CSPCHDijkstra extends BDDijkstra {
         int curNode = bestNode;
         while (predFwd[curNode] != -1){
             pred[curNode] = predFwd[curNode];
-            curNode = myGraph.edgeSource(predFwd[curNode]);
+            curNode = myGraph.getSource(predFwd[curNode]);
         }
         curNode = bestNode;
         while (predBwd[curNode] != -1){
-            pred[myGraph.edgeTarget(predBwd[curNode])] = predBwd[curNode];
-            curNode = myGraph.edgeTarget(predBwd[curNode]);
+            pred[myGraph.getTarget(predBwd[curNode])] = predBwd[curNode];
+            curNode = myGraph.getTarget(predBwd[curNode]);
         }
     }
 
@@ -260,16 +260,16 @@ public class CSPCHDijkstra extends BDDijkstra {
             for (int j = 0; j < myGraph.nofOutEdges(i) - 1; j++) {
                 int cur_edge = myGraph.outEdgeID(i, j);
                 int next_edge = myGraph.outEdgeID(i, j + 1);
-                int trg_node = myGraph.edgeTarget(cur_edge);
-                int next_trg_node = myGraph.edgeTarget(next_edge);
-                assert (myGraph.level(trg_node) <= myGraph.level(next_trg_node));
+                int trg_node = myGraph.getTarget(cur_edge);
+                int next_trg_node = myGraph.getTarget(next_edge);
+                assert (myGraph.getLevel(trg_node) <= myGraph.getLevel(next_trg_node));
             }
             for (int j = 0; j < myGraph.nofInEdges(i) - 1; j++) {
                 int cur_edge = myGraph.inEdgeID(i, j);
                 int next_edge = myGraph.inEdgeID(i, j + 1);
-                int src_node = myGraph.edgeSource(cur_edge);
-                int next_src_node = myGraph.edgeSource(next_edge);
-                assert (myGraph.level(src_node) <= myGraph.level(next_src_node));
+                int src_node = myGraph.getSource(cur_edge);
+                int next_src_node = myGraph.getSource(next_edge);
+                assert (myGraph.getLevel(src_node) <= myGraph.getLevel(next_src_node));
             }
         }
         System.err.println("CH Reqs ok!");
@@ -287,10 +287,10 @@ public class CSPCHDijkstra extends BDDijkstra {
         System.out.println("<trkseg>");
         do {
             cur_edge = pred(cur_node);
-            System.out.println("<trkpt lat=\"" + myGraph.xCoord(myGraph.edgeTarget(cur_edge)) + "\" lon=\"" + myGraph.yCoord(myGraph.edgeTarget(cur_edge)) + "\"></trkpt>");
-            cur_node = myGraph.edgeSource(cur_edge);
+            System.out.println("<trkpt lat=\"" + myGraph.getLat(myGraph.getTarget(cur_edge)) + "\" lon=\"" + myGraph.getLon(myGraph.getTarget(cur_edge)) + "\"></trkpt>");
+            cur_node = myGraph.getSource(cur_edge);
         } while (cur_node != src);
-        System.out.println("<trkpt lat=\"" + myGraph.xCoord(myGraph.edgeSource(cur_edge)) + "\" lon=\"" + myGraph.yCoord(myGraph.edgeSource(cur_edge)) + "\"></trkpt>");
+        System.out.println("<trkpt lat=\"" + myGraph.getLat(myGraph.getSource(cur_edge)) + "\" lon=\"" + myGraph.getLon(myGraph.getSource(cur_edge)) + "\"></trkpt>");
         System.out.println("</trkseg>\n");
         System.out.println("</trk>\n</gpx>");
     }

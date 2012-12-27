@@ -28,19 +28,19 @@ public class CoreExporter {
             int coreEdges = 0;
 
             for (int i = 0; i < g.nofNodes(); i++)
-                if (g.level(i) >= lvlBound) highNodes++;
+                if (g.getLevel(i) >= lvlBound) highNodes++;
 
             for (int j = 0; j < g.nofEdges(); j++) {
-                int src = g.edgeSource(j);
-                int trg = g.edgeTarget(j);
-                if ((g.level(src) >= lvlBound) && (g.level(trg) >= lvlBound)) {
+                int src = g.getSource(j);
+                int trg = g.getTarget(j);
+                if ((g.getLevel(src) >= lvlBound) && (g.getLevel(trg) >= lvlBound)) {
                     // but we dont want to write out edges that were created as shortcuts
                     // very late (contracting a node that had very high  level !)
                     boolean outputEdge = true;
-                    int skipEdgeA = g.edgeSkippedA(j);
+                    int skipEdgeA = g.getSkippedA(j);
                     if (skipEdgeA >= 0) {
-                        int contrNode = g.edgeTarget(skipEdgeA);
-                        if (g.level(contrNode) >= lvlBound) outputEdge = false;
+                        int contrNode = g.getTarget(skipEdgeA);
+                        if (g.getLevel(contrNode) >= lvlBound) outputEdge = false;
                     }
                     highEdges++;
                     if (outputEdge) coreEdges++;
@@ -55,21 +55,21 @@ public class CoreExporter {
             System.err.print("\n Edges: ");
             // write-out edges
             for (int j = 0; j < g.nofEdges; j++) {
-                int src = g.edgeSource(j);
-                int trg = g.edgeTarget(j);
-                if ((g.level(src) >= lvlBound) && (g.level(trg) >= lvlBound)) {
+                int src = g.getSource(j);
+                int trg = g.getTarget(j);
+                if ((g.getLevel(src) >= lvlBound) && (g.getLevel(trg) >= lvlBound)) {
                     boolean outputEdge = true;
-                    int skipEdgeA = g.edgeSkippedA(j);
+                    int skipEdgeA = g.getSkippedA(j);
                     if (skipEdgeA >= 0) {
-                        int contrNode = g.edgeTarget(skipEdgeA);
-                        if (g.level(contrNode) >= lvlBound) outputEdge = false;
+                        int contrNode = g.getTarget(skipEdgeA);
+                        if (g.getLevel(contrNode) >= lvlBound) outputEdge = false;
                     }
 
                     if (outputEdge) {
-                        data_out.write(g.edgeSource(j) + " ");
-                        data_out.write(g.edgeTarget(j) + " ");
-                        data_out.write(g.edgeWeight(j) + " ");
-                        data_out.write(g.edgeLength(j) + " ");
+                        data_out.write(g.getSource(j) + " ");
+                        data_out.write(g.getTarget(j) + " ");
+                        data_out.write(g.getWeight(j) + " ");
+                        data_out.write(g.getEuclidianLength(j) + " ");
                         data_out.write("\n");
                     }
                 }

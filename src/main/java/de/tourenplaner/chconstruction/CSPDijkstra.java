@@ -104,13 +104,13 @@ public class CSPDijkstra {
                 for (int i = 0; i < myGraph.nofOutEdges(cur_node); i++) {
                     int cur_edge = myGraph.outEdgeID(cur_node, i);
                     if (withoutSC){
-                        if (myGraph.edgeSkippedA(cur_edge) >= 0 ){
+                        if (myGraph.getSkippedA(cur_edge) >= 0 ){
                             continue;
                         }
                     }
-                    int cur_trg = myGraph.edgeTarget(cur_edge);
-                    int cur_weight = myGraph.edgeWeight(cur_edge);
-                    int cur_altitude = myGraph.edgeAltitudeDifference(cur_edge);
+                    int cur_trg = myGraph.getTarget(cur_edge);
+                    int cur_weight = myGraph.getWeight(cur_edge);
+                    int cur_altitude = myGraph.getAltitudeDifference(cur_edge);
                     int newDist = cur_dist + (cur_weight-cur_altitude)*lambda + maxLambda*cur_altitude;
                     if (dist[cur_trg] > newDist) {
                         edgeCount++;
@@ -131,10 +131,10 @@ public class CSPDijkstra {
             return;
         int cur_node = trg;
         do {
-            System.err.print(cur_node + "(" + myGraph.level(cur_node) + ")-");
+            System.err.print(cur_node + "(" + myGraph.getLevel(cur_node) + ")-");
             cur_node = pred[cur_node];
         } while (cur_node != lastSource);
-        System.err.println(cur_node + "(" + myGraph.level(cur_node) + ")");
+        System.err.println(cur_node + "(" + myGraph.getLevel(cur_node) + ")");
 
     }
 
@@ -150,10 +150,10 @@ public class CSPDijkstra {
         System.out.println("<trkseg>");
         do {
             cur_edge = pred(cur_node);
-            System.out.println("<trkpt lat=\"" + myGraph.xCoord(myGraph.edgeTarget(cur_edge)) + "\" lon=\"" + myGraph.yCoord(myGraph.edgeTarget(cur_edge)) + "\"></trkpt>");
-            cur_node = myGraph.edgeSource(cur_edge);
+            System.out.println("<trkpt lat=\"" + myGraph.getLat(myGraph.getTarget(cur_edge)) + "\" lon=\"" + myGraph.getLon(myGraph.getTarget(cur_edge)) + "\"></trkpt>");
+            cur_node = myGraph.getSource(cur_edge);
         } while (cur_node != lastSource);
-        System.out.println("<trkpt lat=\"" + myGraph.xCoord(myGraph.edgeSource(cur_edge)) + "\" lon=\"" + myGraph.yCoord(myGraph.edgeSource(cur_edge)) + "\"></trkpt>");
+        System.out.println("<trkpt lat=\"" + myGraph.getLat(myGraph.getSource(cur_edge)) + "\" lon=\"" + myGraph.getLon(myGraph.getSource(cur_edge)) + "\"></trkpt>");
         System.out.println("</trkseg>\n");
         System.out.println("</trk>\n</gpx>");
     }

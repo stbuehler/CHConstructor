@@ -32,9 +32,9 @@ public class GraphWriterTXTFunke implements GraphWriter {
         // write-out coordinates and levels
         System.err.print("\n Nodes:");
         for (int i = 0; i < ramGraph.nofNodes(); i++) {
-            data_out.write(ramGraph.xCoord[i] + " ");
-            data_out.write(ramGraph.yCoord[i] + " ");
-            data_out.write(ramGraph.level[i] + "\n");
+            data_out.write(ramGraph.getLat(i) + " ");
+            data_out.write(ramGraph.getLon(i) + " ");
+            data_out.write(ramGraph.getLevel(i) + "\n");
 
             if ((i % (ramGraph.nofNodes / 10)) == 0) {
                 System.err.print((10 * i / (ramGraph.nofNodes / 10) + "% "));
@@ -43,9 +43,9 @@ public class GraphWriterTXTFunke implements GraphWriter {
         System.err.print("\n Edges: ");
         // write-out edges
         for (int j = 0; j < ramGraph.nofEdges; j++) {
-            data_out.write(ramGraph.edgeSource[j] + " ");
-            data_out.write(ramGraph.edgeTarget[j] + " ");
-            data_out.write(ramGraph.edgeWeight[j] + "\n");
+            data_out.write(ramGraph.getSource(j) + " ");
+            data_out.write(ramGraph.getTarget(j) + " ");
+            data_out.write(ramGraph.getWeight(j) + "\n");
 
             if ((j % (ramGraph.nofEdges / 10)) == 0) {
                 System.err.print((10 * j / (ramGraph.nofEdges / 10) + "% "));

@@ -9,13 +9,8 @@
 
 package de.tourenplaner.chconstruction;
 
-import sun.org.mozilla.javascript.tools.shell.Global;
-
-import javax.print.PrintServiceLookup;
 import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Random;
-import java.util.concurrent.DelayQueue;
 
 /**
  * User: Peter Vollmer
@@ -320,9 +315,9 @@ public class CSPGraphInspector {
         int curEdge;
         while (curNode != src) {
             curEdge = cspDijkstra.pred(curNode);
-            resourceCSP += chGraph.edgeAltitudeDifference(curEdge);
-            costCSP += chGraph.edgeWeight(curEdge);
-            curNode = (chGraph.edgeSource(curEdge));
+            resourceCSP += chGraph.getAltitudeDifference(curEdge);
+            costCSP += chGraph.getWeight(curEdge);
+            curNode = (chGraph.getSource(curEdge));
         }
     }
 
@@ -333,9 +328,9 @@ public class CSPGraphInspector {
         int curEdge;
         while (curNode != src) {
             curEdge = cspCHDijkstra.pred(curNode);
-            resourceCSPCH += chGraph.edgeAltitudeDifference(curEdge);
-            costCSPCH += chGraph.edgeWeight(curEdge);
-            curNode = (chGraph.edgeSource(curEdge));
+            resourceCSPCH += chGraph.getAltitudeDifference(curEdge);
+            costCSPCH += chGraph.getWeight(curEdge);
+            curNode = (chGraph.getSource(curEdge));
         }
     }
 
@@ -346,7 +341,7 @@ public class CSPGraphInspector {
         while (curNode != src) {
             curEdge = cspDijkstra.pred(curNode);
             nofRouteEdges++;
-            curNode = (cspDijkstra.myGraph.edgeSource(curEdge));
+            curNode = (cspDijkstra.myGraph.getSource(curEdge));
         }
 
         // Add them without values we set the values in the next step
@@ -362,7 +357,7 @@ public class CSPGraphInspector {
         for (int i = nofRouteEdges ; i > 0; --i){
             cur_edge = cspDijkstra.pred(cur_node);
             path[i-1] = cur_edge;
-            cur_node = cspDijkstra.myGraph.edgeSource(cur_edge);
+            cur_node = cspDijkstra.myGraph.getSource(cur_edge);
         }
 
 
@@ -383,15 +378,15 @@ public class CSPGraphInspector {
         while (currNode != src) {
             curEdge = cspCHDijkstra.pred(currNode);
             deque.addFirst(curEdge);
-            currNode = chGraph.edgeSource(curEdge);
+            currNode = chGraph.getSource(curEdge);
         }
         while (!deque.isEmpty()) {
 
             curEdge = deque.removeFirst();
-            edgeSkippedA = chGraph.edgeSkippedA(curEdge);
+            edgeSkippedA = chGraph.getSkippedA(curEdge);
             if (edgeSkippedA >= 0) {
                 // We have a shortcut unpack it
-                edgeSkippedB = chGraph.edgeSkippedB(curEdge);
+                edgeSkippedB = chGraph.getSkippedB(curEdge);
                 deque.addFirst(edgeSkippedB);
                 deque.addFirst(edgeSkippedA);
             } else {
@@ -419,12 +414,12 @@ public class CSPGraphInspector {
             int curPoint = trg;
             if(path.length > 0){
                 for (int i = 0; i < path.length; ++i) {
-                    curPoint = chGraph.edgeSource(path[i]);
-                    System.out.println("<trkpt lat=\"" + chGraph.xCoord(curPoint) + "\" lon=\"" + chGraph.yCoord(curPoint) + "\"></trkpt>");
+                    curPoint = chGraph.getSource(path[i]);
+                    System.out.println("<trkpt lat=\"" + chGraph.getLat(curPoint) + "\" lon=\"" + chGraph.getLon(curPoint) + "\"></trkpt>");
                 }
-                curPoint = chGraph.edgeTarget(path[path.length-1]);
+                curPoint = chGraph.getTarget(path[path.length - 1]);
             }
-            System.out.println("<trkpt lat=\"" + chGraph.xCoord(curPoint) + "\" lon=\"" + chGraph.yCoord(curPoint) + "\"></trkpt>");
+            System.out.println("<trkpt lat=\"" + chGraph.getLat(curPoint) + "\" lon=\"" + chGraph.getLon(curPoint) + "\"></trkpt>");
             System.out.println("</trkseg>\n");
             System.out.println("</trk>\n</gpx>");
     }

@@ -45,8 +45,8 @@ public class BwDijkstra extends Dijkstra {
                     targetFound = true;
                 for (int i = 0; i < myGraph.nofInEdges(cur_node); i++) {
                     int cur_edge = myGraph.inEdgeID(cur_node, i);
-                    int cur_trg = myGraph.edgeSource(cur_edge);
-                    int cur_weight = myGraph.edgeWeight(cur_edge);
+                    int cur_trg = myGraph.getSource(cur_edge);
+                    int cur_weight = myGraph.getWeight(cur_edge);
                     if (dist[cur_trg] > cur_dist + cur_weight) {
                         label(cur_trg, cur_dist + cur_weight, cur_node);
                     }

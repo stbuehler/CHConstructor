@@ -87,8 +87,8 @@ public class Dijkstra {
                     targetFound = true;
                 for (int i = 0; i < myGraph.nofOutEdges(cur_node); i++) {
                     int cur_edge = myGraph.outEdgeID(cur_node, i);
-                    int cur_trg = myGraph.edgeTarget(cur_edge);
-                    int cur_weight = myGraph.edgeWeight(cur_edge);
+                    int cur_trg = myGraph.getTarget(cur_edge);
+                    int cur_weight = myGraph.getWeight(cur_edge);
                     if (dist[cur_trg] > cur_dist + cur_weight) {
                         label(cur_trg, cur_dist + cur_weight, cur_node);
                     }
@@ -105,10 +105,10 @@ public class Dijkstra {
             return;
         int cur_node = trg;
         do {
-            System.err.print(cur_node + "(" + myGraph.level(cur_node) + ")-");
+            System.err.print(cur_node + "(" + myGraph.getLevel(cur_node) + ")-");
             cur_node = pred[cur_node];
         } while (cur_node != lastSource);
-        System.err.println(cur_node + "(" + myGraph.level(cur_node) + ")");
+        System.err.println(cur_node + "(" + myGraph.getLevel(cur_node) + ")");
 
     }
 
@@ -118,10 +118,10 @@ public class Dijkstra {
         int cur_node = trg;
         System.err.println("***********************************************");
         do {
-            System.err.println(myGraph.yCoord(cur_node) + "," + myGraph.xCoord(cur_node));
+            System.err.println(myGraph.getLon(cur_node) + "," + myGraph.getLat(cur_node));
             cur_node = pred[cur_node];
         } while (cur_node != lastSource);
-        System.err.println(myGraph.yCoord(cur_node) + "," + myGraph.xCoord(cur_node));
+        System.err.println(myGraph.getLon(cur_node) + "," + myGraph.getLat(cur_node));
         System.err.println("***********************************************");
     }
 

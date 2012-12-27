@@ -63,7 +63,7 @@ public class GraphReaderTXTFunke implements GraphReader {
             edgeSource = Integer.parseInt(splittedLine[0]);
             edgeTarget = Integer.parseInt(splittedLine[1]);
             edgeWeight = Integer.parseInt(splittedLine[2]);
-            edgeHeight = graph.height(edgeTarget)-graph.height(edgeSource);
+            edgeHeight = graph.getHeight(edgeTarget)-graph.getHeight(edgeSource);
             if (edgeHeight < 0) {
                 edgeHeight = 0;
             }

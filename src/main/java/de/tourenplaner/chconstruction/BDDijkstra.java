@@ -97,9 +97,9 @@ public class BDDijkstra {
                         phaseFinished = true;
                     for (int i = 0; i < myGraph.nofOutEdges(cur_node); i++) {
                         int cur_edge = myGraph.outEdgeID(cur_node, i);
-                        int cur_trg = myGraph.edgeTarget(cur_edge);
-                        int cur_weight = myGraph.edgeWeight(cur_edge);
-                        if ((myGraph.level(cur_trg) >= myGraph.level(cur_node)) && (distFwd[cur_trg] > cur_dist + cur_weight)) {
+                        int cur_trg = myGraph.getTarget(cur_edge);
+                        int cur_weight = myGraph.getWeight(cur_edge);
+                        if ((myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node)) && (distFwd[cur_trg] > cur_dist + cur_weight)) {
                             labelFwd(cur_trg, cur_dist + cur_weight);
                             if (settledBwd[cur_trg] && (distFwd[cur_trg] + distBwd[cur_trg] < bestDist))
                                 bestDist = distFwd[cur_trg] + distBwd[cur_trg];
@@ -114,9 +114,9 @@ public class BDDijkstra {
                         phaseFinished = true;
                     for (int i = 0; i < myGraph.nofInEdges(cur_node); i++) {
                         int cur_edge = myGraph.inEdgeID(cur_node, i);
-                        int cur_trg = myGraph.edgeSource(cur_edge);
-                        int cur_weight = myGraph.edgeWeight(cur_edge);
-                        if ((myGraph.level(cur_trg) >= myGraph.level(cur_node)) && (distBwd[cur_trg] > cur_dist + cur_weight)) {
+                        int cur_trg = myGraph.getSource(cur_edge);
+                        int cur_weight = myGraph.getWeight(cur_edge);
+                        if ((myGraph.getLevel(cur_trg) >= myGraph.getLevel(cur_node)) && (distBwd[cur_trg] > cur_dist + cur_weight)) {
                             labelBwd(cur_trg, cur_dist + cur_weight);
                             if (settledFwd[cur_trg] && (distFwd[cur_trg] + distBwd[cur_trg] < bestDist))
                                 bestDist = distFwd[cur_trg] + distBwd[cur_trg];

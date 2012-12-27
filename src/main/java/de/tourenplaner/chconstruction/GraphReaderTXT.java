@@ -149,7 +149,7 @@ public class GraphReaderTXT implements GraphReader {
                 edgeTarget = Integer.parseInt(splittedLine[1]);
                 edgeLength = Integer.parseInt(splittedLine[2]);
                 edgeWeight = calcWeight(edgeLength, Integer.parseInt(splittedLine[3]));
-                edgeHeight = graph.height(edgeTarget)-graph.height(edgeSource);
+                edgeHeight = graph.getHeight(edgeTarget)-graph.getHeight(edgeSource);
                 if (edgeHeight < 0) {
                     edgeHeight = 0;
                 }
