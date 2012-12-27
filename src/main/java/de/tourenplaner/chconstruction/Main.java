@@ -121,13 +121,8 @@ public class Main {
             }
             if (cmd.hasOption("t")){
                 chType=cmd.getOptionValue("t");
-            }else {
-                System.err.println("No ch type choosen, this is mandatory");
-                HelpFormatter fmt = new HelpFormatter();
-                fmt.printHelp("chconstructor", options);
-                return;
             }
-
+ 
             if (cmd.hasOption("if")) {
                 inputFormat = cmd.getOptionValue("if");
             }
