@@ -94,8 +94,8 @@ public class Main {
 
         options.addOption("ti", "text-input", false, "Read input graph in text mode");
         options.addOption("to", "text-output", false, "Write output graph in text mode");
-        options.addOption("if", "input-format", true, "Choose from binfunk, textfunk, textsabine, text");
-        options.addOption("of", "output-format", true, "Choose from binfunk, bintour, textfunk, texttour, texttourcsp");
+        options.addOption("if", "input-format", true, "Choose from textfunk, textsabine, text");
+        options.addOption("of", "output-format", true, "Choose from bintour, textfunk, texttour, texttourcsp");
         options.addOption("i", "input-file", true, "The graph file to read from, use - for standard input");
         options.addOption("o", "output-file", true, "The graph file to write the result to, use - for standard output");
         options.addOption("co", "coure-file", true, "The filename for the core file");
@@ -153,8 +153,6 @@ public class Main {
                 ramGraph = new GraphReaderTXTTourenplanerCSP().createRAMGraph(istream);
             } else if (inputFormat.equals("text")) {
                 ramGraph = new GraphReaderTXT().createRAMGraph(istream);
-            } else if (inputFormat.equals("binfunk")) {
-                ramGraph = new GraphReaderBinaryFunke().createRAMGraph(istream);
             } else {
                 System.err.println("Unknown input format " + inputFormat);
                 return;
@@ -238,8 +236,6 @@ public class Main {
                 new GraphWriterTXTFunke().writeRAMGraph(ostream, graphCH);
             } else if (outputFormat.equals("bintour")) {
                 new GraphWriterBinaryTourenplaner().writeRAMGraph(ostream, graphCH);
-            } else if (outputFormat.equals("binfunk")) {
-                new GraphWriterBinaryFunke().writeRAMGraph(ostream, graphCH);
             } else {
                 System.err.println("Unknown output format " + outputFormat);
                 return;
