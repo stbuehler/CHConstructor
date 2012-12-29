@@ -236,7 +236,7 @@ public class Main {
                 new CoreExporter().exportCore(graphCH, new FileOutputStream(cmd.getOptionValue("co")), maxLevel);
             }
             if (chType.equals("cspch")) {
-                CSPGraphInspector inspectorCH= new CSPGraphInspector(graphCH);
+                CSPGraphInspector inspectorCH= new CSPGraphInspector(prunedGraph, graphCH);
                 inspectorCH.inspectGraph();
                 //inspectorCH.inspectGraphCSP();
                 //inspectorCH.inspectGraphCSPCH();

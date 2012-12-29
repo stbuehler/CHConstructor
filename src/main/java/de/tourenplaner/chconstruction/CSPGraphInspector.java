@@ -19,6 +19,7 @@ import java.util.Random;
  */
 public class CSPGraphInspector {
     RAMGraph chGraph;
+    RAMGraph graph;
     CSPDijkstra cspDijkstra;
     CSPCHDijkstra cspCHDijkstra;
 
@@ -28,17 +29,20 @@ public class CSPGraphInspector {
     int resourceCSPCH;
 
 
-    CSPGraphInspector (RAMGraph graph){
-        this.chGraph = graph;
+    CSPGraphInspector (RAMGraph graph, RAMGraph chGraph){
+        this.chGraph = chGraph;
+        this.graph = graph;
         cspDijkstra = new CSPDijkstra(graph);
-        cspCHDijkstra = new CSPCHDijkstra(graph);
+        cspCHDijkstra = new CSPCHDijkstra(chGraph);
     }
 
     void inspectGraph (){
         Random random = new Random();
         random.setSeed(123456789);
-        int src;
-        int trg;
+        int cspCHSrc;
+        int cspCHTrg;
+        int cspSrc;
+        int cspTrg;
         int lambda;
         int maxLambda = 4096;
         int counter = 0;
@@ -54,47 +58,51 @@ public class CSPGraphInspector {
 
             counter++;
             System.err.println("Counter: "+counter);
-            src = random.nextInt(chGraph.nofNodes());
-            trg = random.nextInt(chGraph.nofNodes());
+            cspCHSrc = random.nextInt(chGraph.nofNodes());
+            cspCHTrg = random.nextInt(chGraph.nofNodes());
+            cspSrc = chGraph.getAltNodeID(cspCHSrc);
+            cspTrg = chGraph.getAltNodeID(cspCHTrg);
+
+
             lambda = random.nextInt(maxLambda);
 
-            System.err.println("CSPGraphInspector: src="+src+", trg="+trg+", lambda="+lambda);
+            System.err.println("CSPGraphInspector: src="+cspCHSrc+", trg="+cspCHTrg+", lambda="+lambda);
 
             cspStartTime=System.nanoTime();
-            cspDist = cspDijkstra.runDijkstraWithoutSC(src, trg, lambda, maxLambda);
+            cspDist = cspDijkstra.runDijkstraWithoutSC(cspSrc, cspTrg, lambda, maxLambda);
             cspEndTime=System.nanoTime();
             cspCHStartTime=System.nanoTime();
-            cspCHDist = cspCHDijkstra.runDijkstra(src,trg,lambda,maxLambda);
+            cspCHDist = cspCHDijkstra.runDijkstra(cspCHSrc,cspCHTrg,lambda,maxLambda);
             cspCHEndTime = System.nanoTime();
             if (cspDist == Integer.MAX_VALUE){
                 if (cspCHDist == Integer.MAX_VALUE){
                     continue;
                 } else {
-                    System.err.println("csp finds no path from src("+src+") to trg("+trg+") and equals not to cspCH which found a path with dist("+cspCHDist+").");
+                    System.err.println("csp finds no path from cspSrc("+cspSrc+") to cspTrg("+cspTrg+"), cspCHSrc("+cspCHSrc+") to cspCHTrg("+cspCHTrg+") and equals not to cspCH which found a path with cspCHDist("+cspCHDist+").");
                     return;
                 }
             }
             if (cspCHDist == Integer.MAX_VALUE){
-                System.err.println("cspCH finds no path from src("+src+") to trg("+trg+") and equals not to csp which found a path with dist("+cspDist+").");
+                System.err.println("cspCH finds no path from src("+cspCHSrc+") to trg("+cspCHTrg+") and equals not to csp which found a path with dist("+cspDist+").");
                 return;
             }
             cspBackTrackStartTime = System.nanoTime();
-            cspPath = cspBacktrack(src,trg);
+            cspPath = cspBacktrack(cspSrc,cspTrg);
             cspBackTrackEndTime = System.nanoTime();
             cspCHBackTrackStartTime = System.nanoTime();
-            cspCHPath = cspCHBacktrack(src,trg);
+            cspCHPath = cspCHBacktrack(cspCHSrc,cspCHTrg);
             cspCHBackTrackEndTime = System.nanoTime();
-            System.out.println(counter+";"+src+";"+trg+";"+lambda+";"+(cspEndTime-cspStartTime)+";"+(cspCHEndTime-cspCHStartTime)+";"+(cspBackTrackEndTime-cspBackTrackStartTime)+";"+(cspCHBackTrackEndTime-cspCHBackTrackStartTime));
+            System.out.println(counter+";"+cspCHSrc+";"+cspCHTrg+";"+lambda+";"+(cspEndTime-cspStartTime)+";"+(cspCHEndTime-cspCHStartTime)+";"+(cspBackTrackEndTime-cspBackTrackStartTime)+";"+(cspCHBackTrackEndTime-cspCHBackTrackStartTime));
 
             System.err.println("Distcsp= "+cspDist+" Distcspch="+cspCHDist);
             if (cspDist != cspCHDist){
                 System.err.println("cspDist("+cspDist+") equals not to cspCHDist("+cspCHDist+").");
                 System.out.println("cspDist("+cspDist+") equals not to cspCHDist("+cspCHDist+").");
 
-                printPathToGPX(cspPath,trg);
+                printPathToGPX(cspPath,cspTrg);
 
 
-                printPathToGPX(cspCHPath,trg);
+                printPathToGPX(cspCHPath,cspCHTrg);
                 return;
             }
         }
