@@ -100,6 +100,7 @@ public class Main {
         options.addOption("ml", "max-level", true, "The maximum level for the core graph (default 40)");
         options.addOption("t", "ch-type", true, "Choose from cspch, ch");
         options.addOption("h", "help", false, "Show this help message");
+        options.addOption("b", "bench", false, "Run benchmarks");
 
         BufferedInputStream istream;
         String inputFormat = "texttour";
@@ -152,7 +153,8 @@ public class Main {
             ramGraph.safeWeights();
             ramGraph.sanityCheck();
             RAMGraph prunedGraph = ramGraph.pruneGraph();
-            preCHBenchTest(ramGraph, prunedGraph);
+            if(cmd.hasOption("b"))
+                preCHBenchTest(ramGraph, prunedGraph);
             // let GC know ramGraph is collectable
             ramGraph = null;
 
@@ -241,7 +243,8 @@ public class Main {
                 //inspectorCH.inspectGraphCSP();
                 //inspectorCH.inspectGraphCSPCH();
             }else{
-                withChBench(prunedGraph, graphCH);
+                if(cmd.hasOption("b"))
+                    withChBench(prunedGraph, graphCH);
             }
 
 
