@@ -94,7 +94,7 @@ public class Main {
         CommandLineParser parser = new GnuParser();
         Options options = new Options();
 
-        options.addOption("if", "input-format", true, "Choose from textfunk, textsabine, text");
+        options.addOption("if", "input-format", true, "Choose from textfunk, textsabine, text, standard");
         options.addOption("of", "output-format", true, "Choose from bintour, textfunk, texttour, texttourcsp");
         options.addOption("i", "input-file", true, "The graph file to read from, use - for standard input");
         options.addOption("o", "output-file", true, "The graph file to write the result to, use - for standard output");
@@ -147,6 +147,8 @@ public class Main {
                 ramGraph = new GraphReaderTXTSabine().createRAMGraph(istream);
             } else if (inputFormat.equals("text")) {
                 ramGraph = new GraphReaderTXT().createRAMGraph(istream);
+            } else if (inputFormat.equals("standard")){
+                ramGraph = new GraphReaderNewStandard().createRAMGraph(istream);
             } else {
                 System.err.println("Unknown input format " + inputFormat);
                 return;
