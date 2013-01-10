@@ -7,7 +7,9 @@
  * of the License.
  */
 
-package de.tourenplaner.chconstruction;
+package de.tourenplaner.chconstruction.graphio;
+
+import de.tourenplaner.chconstruction.graph.RAMGraph;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,13 +17,12 @@ import java.io.OutputStreamWriter;
 
 /**
  * User: Peter Vollmer
- * Date: 10/8/12
- * Time: 12:51 PM
+ * Date: 10/10/12
+ * Time: 5:38 PM
  */
-public class GraphWriterTXTFunke implements GraphWriter {
+public class GraphWriterTXTTourenplaner implements GraphWriter {
     @Override
     public void writeRAMGraph(OutputStream out, RAMGraph ramGraph) throws IOException {
-
         long curTime = System.currentTimeMillis();
 
         OutputStreamWriter data_out = new OutputStreamWriter(out);
@@ -32,8 +33,9 @@ public class GraphWriterTXTFunke implements GraphWriter {
         // write-out coordinates and levels
         System.err.print("\n Nodes:");
         for (int i = 0; i < ramGraph.nofNodes(); i++) {
-            data_out.write(ramGraph.getLat(i) + " ");
-            data_out.write(ramGraph.getLon(i) + " ");
+            data_out.write((int) (ramGraph.getLat(i) * 10000000.0) + " ");
+            data_out.write((int) (ramGraph.getLon(i) * 10000000.0) + " ");
+            data_out.write(ramGraph.getHeight(i) + " ");
             data_out.write(ramGraph.getLevel(i) + "\n");
 
             if ((i % (ramGraph.nofNodes() / 10)) == 0) {
@@ -45,7 +47,10 @@ public class GraphWriterTXTFunke implements GraphWriter {
         for (int j = 0; j < ramGraph.nofEdges(); j++) {
             data_out.write(ramGraph.getSource(j) + " ");
             data_out.write(ramGraph.getTarget(j) + " ");
-            data_out.write(ramGraph.getWeight(j) + "\n");
+            data_out.write(ramGraph.getWeight(j) + " ");
+            data_out.write(ramGraph.getEuclidianLength(j) + " ");
+            data_out.write(ramGraph.getSkippedA(j) + " ");
+            data_out.write(ramGraph.getSkippedB(j) + "\n");
 
             if ((j % (ramGraph.nofEdges() / 10)) == 0) {
                 System.err.print((10 * j / (ramGraph.nofEdges() / 10) + "% "));
@@ -53,6 +58,5 @@ public class GraphWriterTXTFunke implements GraphWriter {
         }
         data_out.close();
         System.err.println("Writing GTXT took " + (System.currentTimeMillis() - curTime) + "ms");
-
     }
 }

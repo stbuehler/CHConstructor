@@ -9,6 +9,8 @@
 
 package de.tourenplaner.chconstruction;
 
+import de.tourenplaner.chconstruction.graph.RAMGraph;
+
 /**
  * User: Peter Vollmer
  * Date: 11/9/12

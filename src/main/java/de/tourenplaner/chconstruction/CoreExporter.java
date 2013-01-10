@@ -9,6 +9,8 @@
 
 package de.tourenplaner.chconstruction;
 
+import de.tourenplaner.chconstruction.graph.SGraph;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;

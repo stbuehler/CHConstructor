@@ -9,6 +9,8 @@
 
 package de.tourenplaner.chconstruction;
 
+import de.tourenplaner.chconstruction.graph.SGraph;
+
 public class BwDijkstra extends Dijkstra {
 
     BwDijkstra(SGraph myGraph) {

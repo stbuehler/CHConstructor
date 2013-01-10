@@ -18,6 +18,8 @@
 
 package de.tourenplaner.chconstruction;
 
+import de.tourenplaner.chconstruction.graph.SGraph;
+
 public class CSPCHDijkstra extends BDDijkstra {
 
     int[] predFwd;

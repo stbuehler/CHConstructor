@@ -7,7 +7,18 @@
  * of the License.
  */
 
-package de.tourenplaner.chconstruction;
+/*
+ * (C) Copyright 2012 Peter Vollmer
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License.
+ */
+
+package de.tourenplaner.chconstruction.graphio;
+
+import de.tourenplaner.chconstruction.graph.RAMGraph;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,7 +29,7 @@ import java.io.OutputStreamWriter;
  * Date: 10/10/12
  * Time: 5:38 PM
  */
-public class GraphWriterTXTTourenplaner implements GraphWriter {
+public class GraphWriterTXTTourenplanerCSP implements GraphWriter {
     @Override
     public void writeRAMGraph(OutputStream out, RAMGraph ramGraph) throws IOException {
         long curTime = System.currentTimeMillis();
@@ -47,6 +58,7 @@ public class GraphWriterTXTTourenplaner implements GraphWriter {
             data_out.write(ramGraph.getTarget(j) + " ");
             data_out.write(ramGraph.getWeight(j) + " ");
             data_out.write(ramGraph.getEuclidianLength(j) + " ");
+            data_out.write(ramGraph.getAltitudeDifference(j) + " ");
             data_out.write(ramGraph.getSkippedA(j) + " ");
             data_out.write(ramGraph.getSkippedB(j) + "\n");
 

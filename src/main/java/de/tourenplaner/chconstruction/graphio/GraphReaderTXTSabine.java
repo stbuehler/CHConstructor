@@ -16,7 +16,9 @@
  * of the License.
  */
 
-package de.tourenplaner.chconstruction;
+package de.tourenplaner.chconstruction.graphio;
+
+import de.tourenplaner.chconstruction.graph.RAMGraph;
 
 import java.io.BufferedReader;
 import java.io.IOException;

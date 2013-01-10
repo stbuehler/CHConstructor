@@ -9,6 +9,8 @@
 
 package de.tourenplaner.chconstruction;
 
+import de.tourenplaner.chconstruction.graph.RAMGraph;
+import de.tourenplaner.chconstruction.graphio.*;
 import org.apache.commons.cli.*;
 
 import java.io.*;

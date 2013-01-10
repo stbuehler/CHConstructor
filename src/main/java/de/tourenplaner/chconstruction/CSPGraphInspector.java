@@ -9,6 +9,8 @@
 
 package de.tourenplaner.chconstruction;
 
+import de.tourenplaner.chconstruction.graph.RAMGraph;
+
 import java.util.ArrayDeque;
 import java.util.Random;
 

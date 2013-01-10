@@ -7,16 +7,18 @@
  * of the License.
  */
 
-package de.tourenplaner.chconstruction;
+package de.tourenplaner.chconstruction.graphio;
+
+import de.tourenplaner.chconstruction.graph.RAMGraph;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * User: Peter Vollmer
  * Date: 10/8/12
- * Time: 11:17 AM
+ * Time: 11:24 AM
  */
-public interface GraphReader {
-    RAMGraph createRAMGraph(InputStream in) throws IOException;
+public interface GraphWriter {
+    void writeRAMGraph(OutputStream out, RAMGraph ramGraph) throws IOException;
 }

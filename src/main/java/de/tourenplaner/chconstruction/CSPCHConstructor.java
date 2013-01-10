@@ -18,6 +18,8 @@
 
 package de.tourenplaner.chconstruction;
 
+import de.tourenplaner.chconstruction.graph.RAMGraph;
+
 import java.util.PriorityQueue;
 
 /* computes contraction hierarchy for the given graph

@@ -7,7 +7,7 @@
  * of the License.
  */
 
-package de.tourenplaner.chconstruction;
+package de.tourenplaner.chconstruction.graph;
 
 import java.util.Random;
 
@@ -56,7 +56,7 @@ public class RAMGraph extends SGraph {
     Random generator = new Random();
 
 
-    RAMGraph(int nofNodes, int nofEdges) {
+    public RAMGraph(int nofNodes, int nofEdges) {
         this.nofNodes = nofNodes;
         this.nofEdges = nofEdges;
         nodesAdded = edgesAdded = 0;
@@ -73,7 +73,7 @@ public class RAMGraph extends SGraph {
      * @param newNofEdges
      * @param newNofNodes
      */
-    RAMGraph(RAMGraph _original, int newNofNodes, int newNofEdges) {
+    public RAMGraph(RAMGraph _original, int newNofNodes, int newNofEdges) {
         nofNodes = newNofNodes;
         nofEdges = newNofEdges;
         maxLevel = 0;
@@ -129,7 +129,7 @@ public class RAMGraph extends SGraph {
         edgeSkippedB = new int[nofEdges];
     }
 
-    RAMGraph compressGraph()    // creates new graph object with exactly added nodes/edges
+    public RAMGraph compressGraph()    // creates new graph object with exactly added nodes/edges
     {
         RAMGraph resultGraph = new RAMGraph(nodesAdded, edgesAdded);
 
@@ -146,7 +146,7 @@ public class RAMGraph extends SGraph {
     }
 
 
-    void setupOffsets()    // computes edgeOffsets for given vertices and edges
+    public void setupOffsets()    // computes edgeOffsets for given vertices and edges
     {
         System.err.println("SetupOffsets for " + nofNodes + "/" + nofEdges + " and added " + nodesAdded + "/" + edgesAdded);
         int[] outCount = new int[nofNodes];
@@ -241,7 +241,7 @@ public class RAMGraph extends SGraph {
         quickSortEdgeArray(storage + 1, end);
     }
 
-    RAMGraph pruneGraphSelfloops()
+    public RAMGraph pruneGraphSelfloops()
     // get rid of superfluous edges
     {
         int selfLoops = 0;
@@ -278,7 +278,7 @@ public class RAMGraph extends SGraph {
         return resultGraph;
     }
 
-    RAMGraph pruneGraph()
+    public RAMGraph pruneGraph()
     // get rid of superfluous edges
     {
         int selfLoops = 0;
@@ -331,7 +331,7 @@ public class RAMGraph extends SGraph {
         }
     }
 
-    RAMGraph rearrangeGraph() {
+    public RAMGraph rearrangeGraph() {
         // rearrange graph according to levels of the nodes (small levels first)
         // does not rearrange within the nodes of one getLevel
         RAMGraph resultGraph = new RAMGraph(nodesAdded, edgesAdded);
@@ -395,14 +395,14 @@ public class RAMGraph extends SGraph {
      * by setting all lower weights to 1.
      * Safe weights are assumed when setting up CH Shortcuts!
      */
-    void safeWeights(){
+    public void safeWeights(){
         for (int i = 0; i < nofEdges; i++){
             if (edgeWeight[i] <= 0)
                 edgeWeight[i] = 1;
         }
     }
 
-    void sanityCheck() {
+    public void sanityCheck() {
         int minWeight = Integer.MAX_VALUE;
         int maxWeight = 0;
         long inSum = 0, inDegSum = 0;
@@ -437,7 +437,7 @@ public class RAMGraph extends SGraph {
                 + (inSum + outSum) / nofEdges());
     }
 
-    void printLevelStats(){
+    public void printLevelStats(){
         ensureMaxLevel();
 
         int[] levelNodeHist = new int[maxLevel+1];
@@ -472,7 +472,7 @@ public class RAMGraph extends SGraph {
     }
 
 
-    void setCHShortCuts() {
+    public void setCHShortCuts() {
         //only makes real sense for CH computations
         System.err.println("Setting CH shortcuts");
         int count_shortcuts = 0;
@@ -505,7 +505,7 @@ public class RAMGraph extends SGraph {
     }
 
 
-    void addNode(float _lat, float _lon, int _altID, int _height, int _OSMID) {
+    public void addNode(float _lat, float _lon, int _altID, int _height, int _OSMID) {
         assert (nodesAdded < nofNodes);
         lats[nodesAdded] = _lat;
         lons[nodesAdded] = _lon;
@@ -515,7 +515,7 @@ public class RAMGraph extends SGraph {
         nodesAdded++;
     }
 
-    int addNode(float _lat, float _lon, int _altID, int _height, int _OSMID, int _level) {
+    public int addNode(float _lat, float _lon, int _altID, int _height, int _OSMID, int _level) {
         assert (nodesAdded < nofNodes);
         lats[nodesAdded] = _lat;
         lons[nodesAdded] = _lon;
@@ -527,7 +527,7 @@ public class RAMGraph extends SGraph {
         return (nodesAdded - 1);    // return ID of added node
     }
 
-    void addNodeAt(float _lat, float _lon, int _altID, int _height, int _OSMID, int _level, int _pos) {    // add node at specified position; voids nodesAdded variable!!!!
+    public void addNodeAt(float _lat, float _lon, int _altID, int _height, int _OSMID, int _level, int _pos) {    // add node at specified position; voids nodesAdded variable!!!!
         nodesAdded = nofNodes;
         assert (_pos < nofNodes);
         lats[_pos] = _lat;
@@ -538,7 +538,7 @@ public class RAMGraph extends SGraph {
         level[_pos] = _level;
     }
 
-    void addEdge(int _src, int _trg, int _weight, int _length, int _alt_diff) {
+    public void addEdge(int _src, int _trg, int _weight, int _length, int _alt_diff) {
         edgeSource[edgesAdded] = _src;
         edgeTarget[edgesAdded] = _trg;
         edgeWeight[edgesAdded] = _weight;
@@ -547,7 +547,7 @@ public class RAMGraph extends SGraph {
         edgesAdded++;
     }
 
-    void addEdge(int _src, int _trg, int _weight, int _length, int _alt_diff, int _skipA, int _skipB) {
+    public void addEdge(int _src, int _trg, int _weight, int _length, int _alt_diff, int _skipA, int _skipB) {
         edgeSource[edgesAdded] = _src;
         edgeTarget[edgesAdded] = _trg;
         edgeWeight[edgesAdded] = _weight;
@@ -560,87 +560,87 @@ public class RAMGraph extends SGraph {
 
 
     @Override
-    int nofEdges() {
+    public int nofEdges() {
         return nofEdges;
     }
 
     @Override
-    int nofNodes() {
+    public int nofNodes() {
         return nofNodes;
     }
 
     // overwritten methods
-    float getLat(int nodeID) {
+    public float getLat(int nodeID) {
         return lats[nodeID];
     }
 
-    float getLon(int nodeID) {
+    public float getLon(int nodeID) {
         return lons[nodeID];
     }
 
-    int getAltNodeID(int nodeID) {
+    public int getAltNodeID(int nodeID) {
         return altID[nodeID];
     }
 
-    int getHeight(int nodeID) {
+    public int getHeight(int nodeID) {
         return height[nodeID];
     }
 
-    int getOSMID(int nodeID) {
+    public int getOSMID(int nodeID) {
         return OSMID[nodeID];
     }
 
-    int getLevel(int nodeID) {
+    public int getLevel(int nodeID) {
         return level[nodeID];
     }
 
-    void setLevel(int nodeID, int newLevel) {
+    public void setLevel(int nodeID, int newLevel) {
         level[nodeID] = newLevel;
     }
 
-    int nofOutEdges(int nodeID) {
+    public int nofOutEdges(int nodeID) {
         return (outEdgeOffset[nodeID + 1] - outEdgeOffset[nodeID]);
     }
 
-    int nofInEdges(int nodeID) {
+    public int nofInEdges(int nodeID) {
         return (inEdgeOffset[nodeID + 1] - inEdgeOffset[nodeID]);
     }
 
-    int outEdgeID(int nodeID, int edgePos)    // returns edge ID of edgePos-th outEdge of nodeID
+    public int outEdgeID(int nodeID, int edgePos)    // returns edge ID of edgePos-th outEdge of nodeID
     {
         return outEdgeList[outEdgeOffset[nodeID] + edgePos];
     }
 
-    int inEdgeID(int nodeID, int edgePos)    // returns edge ID of edgePos-th inEdge of nodeID
+    public int inEdgeID(int nodeID, int edgePos)    // returns edge ID of edgePos-th inEdge of nodeID
     {
         return inEdgeList[inEdgeOffset[nodeID] + edgePos];
     }
 
-    int getSource(int edgeID) {
+    public int getSource(int edgeID) {
         return edgeSource[edgeID];
     }
 
-    int getTarget(int edgeID) {
+    public int getTarget(int edgeID) {
         return edgeTarget[edgeID];
     }
 
-    int getWeight(int edgeID) {
+    public int getWeight(int edgeID) {
         return edgeWeight[edgeID];
     }
 
-    int getEuclidianLength(int edgeID) {
+    public int getEuclidianLength(int edgeID) {
         return edgeLength[edgeID];
     }
 
-    int getAltitudeDifference(int edgeID) {
+    public int getAltitudeDifference(int edgeID) {
         return edgeAltitudeDifference[edgeID];
     }
 
-    int getSkippedA(int edgeID) {
+    public int getSkippedA(int edgeID) {
         return edgeSkippedA[edgeID];
     }
 
-    int getSkippedB(int edgeID) {
+    public int getSkippedB(int edgeID) {
         return edgeSkippedB[edgeID];
     }
 }
