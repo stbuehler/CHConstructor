@@ -39,7 +39,7 @@ public class GraphReaderNewStandard implements GraphReader {
 
     private int calcWeight(int length, int roadType, int maxSpeed) {
         double weight;
-        if (maxSpeed == -1){
+        if (maxSpeed <= 0){
             switch (roadType) {
                 //motorway
                 case 1:
@@ -109,7 +109,7 @@ public class GraphReaderNewStandard implements GraphReader {
                     weight = (length * 1.3) / 0.5;
             }
         } else {
-            weight = (length * 1.3) / (((double) maxSpeed)/100.0);
+            weight = (length * 1.3) / (((maxSpeed > 130)? 130.0 : (double) maxSpeed)/100.0);
         }
 
 
