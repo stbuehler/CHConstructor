@@ -95,7 +95,7 @@ public class Main {
         Options options = new Options();
 
         options.addOption("if", "input-format", true, "Choose from textfunk, textsabine, text, standard");
-        options.addOption("of", "output-format", true, "Choose from bintour, textfunk, texttour, texttourcsp");
+        options.addOption("of", "output-format", true, "Choose from bintour, textfunk, texttour, texttourcsp, offlinetp");
         options.addOption("i", "input-file", true, "The graph file to read from, use - for standard input");
         options.addOption("o", "output-file", true, "The graph file to write the result to, use - for standard output");
         options.addOption("co", "core-file", true, "The filename for the core file");
@@ -230,6 +230,8 @@ public class Main {
                 new GraphWriterTXTFunke().writeRAMGraph(ostream, graphCH);
             } else if (outputFormat.equals("bintour")) {
                 new GraphWriterBinaryTourenplaner().writeRAMGraph(ostream, graphCH);
+            } else if (outputFormat.equals("offlinetp")) {
+                new GraphWriterOfflineToureNPlaner().writeRAMGraph(ostream, graphCH);
             } else {
                 System.err.println("Unknown output format " + outputFormat);
                 return;
